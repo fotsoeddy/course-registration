@@ -11,6 +11,23 @@
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <style>
+        /* Responsive styles for mobile view */
+        @media (max-width: 640px) {
+            .footer-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .footer-buttons a,
+            .footer-buttons button {
+                width: 100%;
+                max-width: 300px; /* Adjust width as needed */
+                font-size: 0.875rem; /* Smaller font size for mobile */
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -38,20 +55,20 @@
                     </label>
                     <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="********">
                 </div>
-                <div class="flex items-center justify-between mb-4">
-                    <button onclick="window.location.href='/dashboard/student_dashboard.html';" class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center" style="background-color:#0e9612;" type="button">
+                <div class="flex items-center justify-center mb-4">
+                    <button onclick="window.location.href='/dashboard/student_dashboard.html';" class="text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline flex items-center" style="background-color:#0e9612; width: 100%;" type="button">
                         <i class="fas fa-arrow-right mr-2"></i>
                         LOGIN
                     </button>
                 </div>
             </div>
             <!-- Footer Section -->
-            <div class="flex flex-col md:flex-row justify-between p-4">
-                <a href="/auth/sign-up.html" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center mb-2 md:mb-0 text-center md:w-auto w-full">
+            <div class="flex flex-col md:flex-row justify-between p-4 space-y-2 md:space-y-0 footer-buttons">
+                <a href="/auth/sign-up.html" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center text-sm md:text-base">
                     <i class="fas fa-user-plus mr-2"></i>
                     CREATE ACCOUNT
                 </a>
-                <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center text-center md:w-auto w-full" type="button">
+                <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center text-sm md:text-base" type="button">
                     <i class="fas fa-key mr-2"></i>
                     FORGOT PASSWORD
                 </button>
@@ -64,6 +81,5 @@
             </div>
         </div>
     </div>
-    
 </body>
 </html>
