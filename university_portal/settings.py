@@ -147,7 +147,7 @@ AUTHENTICATION_BACKENDS = [
 AUTH_USER_MODEL = 'students.CustomUser'
 
 
-LOGIN_REDIRECT_URL = '/students/dashboard/'
+LOGIN_URL = 'student_login'
 LOGOUT_REDIRECT_URL = '/students/login/'
 
 

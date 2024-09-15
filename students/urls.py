@@ -1,8 +1,5 @@
-# students/urls.py
-
 from django.urls import path
-from django.contrib.auth import views as auth_views
-from .views import login_view, register_view, student_dashboard, course_registration, student_form, academic_structure, ca_results, exam_results, final_results
+from .views import login_view, register_view, student_dashboard, course_registration, student_form, academic_structure, ca_results, exam_results, final_results, logout_view
 
 urlpatterns = [
     path('', login_view, name='student_login'),
@@ -14,5 +11,5 @@ urlpatterns = [
     path('ca-results/', ca_results, name='ca_results'),
     path('exam-results/', exam_results, name='exam_results'),
     path('final-results/', final_results, name='final_results'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', logout_view, name='logout'),  # Custom logout path
 ]
