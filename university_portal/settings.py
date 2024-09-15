@@ -18,14 +18,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 import dj_database_url
+from decouple import config
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+# Retrieve values from environment variables
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+DEBUG = os.getenv('DEBUG') == 'True'
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(',')
+
+# Database settings
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgres://university_portal_bz4g_user:l4gI2ekyBCGeyqWxsrTq9BGG2UJGq77a@localhost:5432/university_portal',
-        conn_max_age=600,
-        ssl_require=True
-    )
+    'default': {
+        'ENGINE': os.getenv('DB_ENGINE'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+    }
 }
+
+
 
 
 
