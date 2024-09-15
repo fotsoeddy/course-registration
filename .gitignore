@@ -1,0 +1,36 @@
+# Virtual environment folder (venv)
+venv/
+env/
+
+# Python bytecode files
+__pycache__/
+*.py[cod]
+
+staticfiles/
+media/
+
+*.sqlite3
+
+# Django migrations (optional, but recommended to keep them)
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# IDE-specific files (VSCode, PyCharm, etc.)
+.vscode/
+.idea/
+*.swp
+
+# OS-specific files
+.DS_Store         # macOS
+Thumbs.db         # Windows
+
+# Ignore environment and secret files
+.env             
+
+# Logs and temporary files
+*.log
+*.pot
+*.pid
+*.out
+*.err
+*.~lock.*
