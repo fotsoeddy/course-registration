@@ -16,6 +16,11 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings
+from django.shortcuts import render, redirect
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.contrib import messages
+from django.utils.translation import gettext as _
 
 
 from django.shortcuts import render
@@ -50,13 +55,7 @@ def register_view(request):
 
         if password == confirm_password:
             try:
-                user = CustomUser.objects.create_user(
-                    username=email,
-                    password=password,
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name
-                )
+                user = CustomUser.objects.create_user(username=email, password=password, email=email, first_name=first_name, last_name=last_name)
                 user.save()
                 UserProfile.objects.create(
                     user=user,
@@ -64,14 +63,24 @@ def register_view(request):
                     academic_year=academic_year,
                     picture=picture
                 )
-                # Send registration email
-                send_mail(
-                    'Registration Successful',
-                    f'Hello {first_name},\n\nYour registration was successful! You can now log in with your credentials.\n\nBest regards,\nYour Team',
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
+
+                # Prepare email
+                context = {
+                    'email': email,
+                    'status_message': _('Your account has been created successfully!'),
+                }
+                subject = _('Welcome to Eddy Organization')
+                message = render_to_string('emails/welcome.html', context)
+                
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=None,
+                    to=[email]
                 )
+                email.content_subtype = 'html'
+                email.send()
+
                 messages.success(request, "Account created successfully! Please log in.")
                 return redirect('student_login')
             except Exception as e:
@@ -107,20 +116,30 @@ def exam_results(request):
 def final_results(request):
     return render(request, 'students/final_results.html')
 
-
 @login_required
 def logout_view(request):
-    user = request.user
-    if user.is_authenticated:
-        # Send logout email
-        send_mail(
-            'Logout Confirmation',
-            f'Hello {user.first_name},\n\nYou have successfully logged out.\n\nBest regards,\nYour Team',
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,
-        )
-        # Log out the user
+    if request.user.is_authenticated:
+        email = request.user.email
         auth_logout(request)
-        return redirect('student_login')  # Redirect to login page after logout
-    return redirect('student_login')
+        
+        # Prepare email
+        context = {
+            'email': email,
+            'status_message': _('You have been logged out successfully.'),
+        }
+        subject = _('Goodbye from Eddy Organization')
+        message = render_to_string('emails/user_logged_out.html', context)
+        
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=None,
+            to=[email]
+        )
+        email.content_subtype = 'html'
+        email.send()
+        
+        messages.info(request, "You have been logged out.")
+        return redirect('student_login')
+    else:
+        return redirect('student_login')
