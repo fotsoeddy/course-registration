@@ -14,6 +14,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import render, redirect
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.contrib import messages
+from django.utils.translation import gettext as _
 
 
 from django.shortcuts import render
@@ -56,6 +63,24 @@ def register_view(request):
                     academic_year=academic_year,
                     picture=picture
                 )
+
+                # Prepare email
+                context = {
+                    'email': email,
+                    'status_message': _('Your account has been created successfully!'),
+                }
+                subject = _('Welcome to Eddy Organization')
+                message = render_to_string('emails/welcome.html', context)
+                
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=None,
+                    to=[email]
+                )
+                email.content_subtype = 'html'
+                email.send()
+
                 messages.success(request, "Account created successfully! Please log in.")
                 return redirect('student_login')
             except Exception as e:
@@ -63,7 +88,6 @@ def register_view(request):
         else:
             messages.error(request, "Passwords do not match.")
     return render(request, 'students/register.html')
-
 @login_required
 def student_dashboard(request):
     return render(request, 'students/student_dashboard.html')
@@ -92,9 +116,30 @@ def exam_results(request):
 def final_results(request):
     return render(request, 'students/final_results.html')
 
-
-
 @login_required
 def logout_view(request):
-    auth_logout(request)  
-    return redirect('student_login') 
+    if request.user.is_authenticated:
+        email = request.user.email
+        auth_logout(request)
+        
+        # Prepare email
+        context = {
+            'email': email,
+            'status_message': _('You have been logged out successfully.'),
+        }
+        subject = _('Goodbye from Eddy Organization')
+        message = render_to_string('emails/user_logged_out.html', context)
+        
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=None,
+            to=[email]
+        )
+        email.content_subtype = 'html'
+        email.send()
+        
+        messages.info(request, "You have been logged out.")
+        return redirect('student_login')
+    else:
+        return redirect('student_login')
