@@ -23,6 +23,7 @@ from decouple import config
 from dotenv import load_dotenv
 import os
 
+# Load environment variables from .env file
 load_dotenv()
 
 # Retrieve values from environment variables
@@ -42,6 +43,7 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT'),
     }
 }
+
 
 
 
