@@ -29,20 +29,21 @@ load_dotenv()
 # Retrieve values from environment variables
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DEBUG = os.getenv('DEBUG') == 'True'
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')
+ALLOWED_HOSTS = ['*']
 
 
 # Database settings
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'university_portal_bz4g',
+        'USER': 'university_portal_bz4g_user',
+        'PASSWORD': 'l4gI2ekyBCGeyqWxsrTq9BGG2UJGq77a',
+        'HOST': 'dpg-crj7ruij1k6c73fk5j0g-a.oregon-postgres.render.com',
+        'PORT': '5432',
     }
 }
+
 
 
 
