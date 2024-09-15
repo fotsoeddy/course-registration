@@ -48,7 +48,6 @@ from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from .models import CustomUser, UserProfile
-
 def register_view(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -63,18 +62,10 @@ def register_view(request):
 
         if password == confirm_password:
             try:
-                # Create the user
-                user = CustomUser.objects.create_user(
-                    username=email,
-                    password=password,
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name,
-                    matriculation=matriculation
-                )
+                user = CustomUser.objects.create_user(username=email, password=password, email=email, first_name=first_name, last_name=last_name)
                 user.save()
 
-                # Create the user profile
+                # Create user profile
                 UserProfile.objects.create(
                     user=user,
                     field_of_study=field_of_study,
@@ -82,34 +73,35 @@ def register_view(request):
                     picture=picture
                 )
 
-                # Prepare and send the email
+                # Prepare email with extra details
                 context = {
                     'email': email,
                     'status_message': 'Your account has been created successfully!',
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'matriculation': matriculation,
+                    'field_of_study': field_of_study,
+                    'academic_year': academic_year,
                 }
-                subject = 'Welcome to My Organization'
+                subject = 'Welcome to Eddy Organization'
                 message = render_to_string('emails/welcome.html', context)
-
-                email_message = EmailMessage(
+                
+                email_msg = EmailMessage(
                     subject=subject,
                     body=message,
-                    from_email=None,  # Use the default from_email from your settings
+                    from_email=None,
                     to=[email]
                 )
-                email_message.content_subtype = 'html'
-                email_message.send()
+                email_msg.content_subtype = 'html'
+                email_msg.send()
 
-                # Notify user and redirect
                 messages.success(request, "Account created successfully! Please log in.")
                 return redirect('student_login')
-
             except Exception as e:
                 messages.error(request, f"An error occurred: {e}")
         else:
             messages.error(request, "Passwords do not match.")
-
     return render(request, 'students/register.html')
-
 
 @login_required
 def student_dashboard(request):
