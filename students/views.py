@@ -12,6 +12,8 @@ from django.contrib.auth import login as auth_login
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.decorators import login_required
 
 
 from django.shortcuts import render
@@ -89,3 +91,10 @@ def exam_results(request):
 @login_required
 def final_results(request):
     return render(request, 'students/final_results.html')
+
+
+
+@login_required
+def logout_view(request):
+    auth_logout(request)  
+    return redirect('student_login') 
