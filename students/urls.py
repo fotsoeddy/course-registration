@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import login_view, register_view, student_dashboard, course_registration, student_form, academic_structure, ca_results, exam_results, final_results, logout_view
 
 urlpatterns = [
@@ -13,3 +15,5 @@ urlpatterns = [
     path('final-results/', final_results, name='final_results'),
     path('logout/', logout_view, name='logout'),  # Custom logout path
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
