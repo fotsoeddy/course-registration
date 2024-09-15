@@ -21,6 +21,9 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.utils.translation import gettext as _
+# views.py
+from django.shortcuts import render
+from .models import UserProfile
 
 
 from django.shortcuts import render
@@ -40,7 +43,11 @@ def login_view(request):
         else:
             messages.error(request, "Invalid email or password.")
     return render(request, 'students/login.html')
-
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from .models import CustomUser, UserProfile
 def register_view(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -57,6 +64,8 @@ def register_view(request):
             try:
                 user = CustomUser.objects.create_user(username=email, password=password, email=email, first_name=first_name, last_name=last_name)
                 user.save()
+
+                # Create user profile
                 UserProfile.objects.create(
                     user=user,
                     field_of_study=field_of_study,
@@ -64,22 +73,27 @@ def register_view(request):
                     picture=picture
                 )
 
-                # Prepare email
+                # Prepare email with extra details
                 context = {
                     'email': email,
-                    'status_message': _('Your account has been created successfully!'),
+                    'status_message': 'Your account has been created successfully!',
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'matriculation': matriculation,
+                    'field_of_study': field_of_study,
+                    'academic_year': academic_year,
                 }
-                subject = _('Welcome to Eddy Organization')
+                subject = 'Welcome to Eddy Organization'
                 message = render_to_string('emails/welcome.html', context)
                 
-                email = EmailMessage(
+                email_msg = EmailMessage(
                     subject=subject,
                     body=message,
                     from_email=None,
                     to=[email]
                 )
-                email.content_subtype = 'html'
-                email.send()
+                email_msg.content_subtype = 'html'
+                email_msg.send()
 
                 messages.success(request, "Account created successfully! Please log in.")
                 return redirect('student_login')
@@ -88,9 +102,12 @@ def register_view(request):
         else:
             messages.error(request, "Passwords do not match.")
     return render(request, 'students/register.html')
+
 @login_required
 def student_dashboard(request):
-    return render(request, 'students/student_dashboard.html')
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request, 'students/student_dashboard.html', {'profile': profile})
+
 
 @login_required
 def course_registration(request):

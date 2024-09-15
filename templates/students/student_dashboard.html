@@ -7,17 +7,19 @@
         <div class="flex items-center space-x-4">
             <!-- Student Profile Picture Placeholder -->
             <div class="bg-white p-2 rounded-full border-4 border-white w-16 h-16 flex justify-center items-center shadow-lg">
-                {% if user.profile.picture %}
-                    <img src="{{ user.profile.picture.url }}" alt="Profile Picture" class="w-full h-full object-cover rounded-full">
+                {% if profile.picture %}
+                    <img src="{{ profile.picture.url }}" alt="Profile Picture" class="rounded-full object-cover w-full h-full">
                 {% else %}
-                    <i class="fas fa-user-graduate text-gray-400 text-4xl"></i>
+                    <p>No profile picture available</p>
                 {% endif %}
             </div>
+            
+
             <div>
                 <h2 class="text-white text-xl font-semibold">{{ user.get_full_name }}</h2>
-                <p class="text-white text-sm">Matriculation Number: {{ user.profile.matriculation }}</p>
-                <p class="text-white text-sm">Field of Study: {{ user.profile.field_of_study }}</p>
-                <p class="text-white text-sm">Academic Year: {{ user.profile.academic_year }}</p>
+                <p class="text-white text-sm">Matriculation Number: {{ profile.user.matriculation }}</p>
+                <p class="text-white text-sm">Field of Study: {{ profile.field_of_study }}</p>
+                <p class="text-white text-sm">Academic Year: {{ profile.academic_year }}</p>
             </div>
         </div>
         <!-- Logout Button -->

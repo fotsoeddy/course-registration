@@ -2,10 +2,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
 class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)  # Ensure email is unique
+    matriculation = models.CharField(max_length=100, unique=True, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
+    REQUIRED_FIELDS = ['username'] 
 
     # Override default reverse relationship names to avoid clashes
     groups = models.ManyToManyField(

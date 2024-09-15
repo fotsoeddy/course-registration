@@ -1,14 +1,18 @@
 {% extends "emails/base_email.html" %}
 
 {% block content %}
-<body class="font-sans bg-gray-100 p-4">
-    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-2xl font-bold text-gray-800 mb-4">Welcome to Eddy Organization</h1>
-        <p>Hello {{ email }},</p>
-        <p>{{ status_message }}</p>
-        <p>If you have any questions, do not hesitate to reach out to our support team.</p>
-        <p>Best regards,</p>
-        <p>The Eddy Organization Team</p>
+    <div class="text-center">
+        <h1 class="text-2xl font-bold text-blue-600 mb-4">Welcome to Eddy Organization, {{ first_name }} {{ last_name }}!</h1>
+        <p class="text-lg text-gray-700">Hello {{ email }},</p>
+        <p class="text-gray-600 mb-4">{{ status_message }}</p>
+
+        <h2 class="text-xl font-semibold">Your Information:</h2>
+        <p class="text-gray-700 mb-2"><strong>Matriculation Number:</strong> {{ matriculation }}</p>
+        <p class="text-gray-700 mb-2"><strong>Field of Study:</strong> {{ field_of_study }}</p>
+        <p class="text-gray-700 mb-4"><strong>Academic Year:</strong> {{ academic_year }}</p>
+
+        <p class="text-gray-600 mb-4">If you have any questions or need further assistance, please reach out to our support team.</p>
+        <p class="text-gray-700">Best regards,</p>
+        <p class="text-gray-700">The Eddy Organization Team</p>
     </div>
-</body>
 {% endblock %}
