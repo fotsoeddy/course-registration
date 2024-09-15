@@ -1,0 +1,79 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Université de la Cote</title>
+
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+</head>
+<body>
+    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div class="bg-white shadow-md rounded-lg w-11/12 max-w-2xl">
+            <!-- Header Section -->
+            <div class="flex flex-col p-6 rounded-t-lg justify-center items-center" style="height: 250px; background-color:#0e9612;">
+                <h1 class="text-white text-2xl font-bold">Université de la Cote</h1>
+                <p class="text-white">Create an account to access our services</p>
+            </div>
+            <div class="bg-white -mt-10 p-2 rounded-full mx-auto border-4 border-white w-20 h-20 flex justify-center items-center shadow-lg">
+                <!-- Placeholder for School Logo -->
+                <i class="fas fa-user-plus text-gray-400 text-3xl"></i>
+            </div>
+            <!-- Form Section -->
+            <div class="p-8">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="first_name">
+                        First Name:
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="first_name" type="text" placeholder="Enter your first name">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="last_name">
+                        Last Name:
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last_name" type="text" placeholder="Enter your last name">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                        Email Address:
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Enter your email address">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="matriculation">
+                        Matriculation Number:
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="matriculation" type="text" placeholder="Enter your matriculation number">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                        Password:
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Create a password">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm_password">
+                        Confirm Password:
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="confirm_password" type="password" placeholder="Confirm your password">
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center" style="background-color:#0e9612;" type="button">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        SIGN UP
+                    </button>
+                </div>
+            </div>
+            <!-- Footer Section -->
+            <div class="flex justify-center mb-4">
+                <p class="text-gray-600">Already have an account? <a href="/index.html" class="text-[#0e9612] font-bold">Login</a></p>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>

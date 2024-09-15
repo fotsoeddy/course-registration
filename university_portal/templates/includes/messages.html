@@ -1,0 +1,45 @@
+<div class="row">
+    {% if messages %}
+    {% for message in messages %}
+        <div class="container-fluid p-0 pl-8">
+            <div id="myAlert" class="alert {{ message.tags }} alert-dismissible" role="alert" style="width: auto; float: right;">
+
+               
+                {{ message|safe }}
+            </div>
+        </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<script>
+    $(document).ready(function() {
+        {% if messages %}
+
+            {% for message in messages %}
+                console.log('Message:', '{{ message }}');
+                console.log('Message Tags:', '{{ message.tags }}');
+
+                var icon = 'info'; // Default icon
+
+                {% if message.tags == 'alert-debug' %}
+                    icon = 'info';
+                {% elif message.tags == 'alert-info' %}
+                    icon = 'info';
+                {% elif message.tags == 'alert-success' %}
+                    icon = 'success';
+                {% elif message.tags == 'alert-warning' %}
+                    icon = 'warning';
+                {% elif message.tags == 'alert-error' %}
+                    icon = 'error';
+                {% endif %}
+
+                Swal.fire({
+                    icon: icon,
+                    title: '{{ message }}',
+                });
+            {% endfor %}
+        {% endif %}
+    });
+</script>
+

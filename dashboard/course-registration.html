@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Registration</title>
+
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .course-checkbox:checked + label {
+            background-color: #0e9612;
+            color: white;
+        }
+        .course-checkbox:checked {
+            accent-color: #0e9612;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="bg-white shadow-md rounded-lg w-full max-w-4xl p-8 flex flex-col">
+        <!-- Header Section -->
+        <div class="p-6 rounded-t-lg flex justify-between items-center" style="background-color: #0e9612;">
+            <h1 class="text-white text-2xl font-semibold">Course Registration</h1>
+            <a href="student_dashboard.html" class="text-white flex items-center space-x-2 hover:underline">
+                <i class="fas fa-arrow-left text-xl"></i>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+        <!-- Form Section -->
+        <div class="mt-6">
+            <form action="#" method="POST" class="space-y-6">
+                <div class="flex flex-col">
+                    <label class="text-gray-700 text-sm font-semibold mb-2" for="academic-year">
+                        Academic Year:
+                    </label>
+                    <select id="academic-year" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                    </select>
+                </div>
+                <div class="flex flex-col">
+                    <label class="text-gray-700 text-sm font-semibold mb-2" for="semester">
+                        Semester:
+                    </label>
+                    <select id="semester" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="resit">Resit</option>
+                    </select>
+                </div>
+                <div class="flex flex-col mt-4">
+                    <label class="text-gray-700 text-sm font-semibold mb-2">
+                        Courses:
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- Course Checkboxes -->
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course1" class="course-checkbox hidden">
+                            <label for="course1" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Mathematics</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course2" class="course-checkbox hidden">
+                            <label for="course2" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Physics</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course3" class="course-checkbox hidden">
+                            <label for="course3" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Chemistry</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course4" class="course-checkbox hidden">
+                            <label for="course4" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Biology</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course5" class="course-checkbox hidden">
+                            <label for="course5" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Computer Science</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course6" class="course-checkbox hidden">
+                            <label for="course6" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Economics</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course7" class="course-checkbox hidden">
+                            <label for="course7" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>History</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course8" class="course-checkbox hidden">
+                            <label for="course8" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Philosophy</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course9" class="course-checkbox hidden">
+                            <label for="course9" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Psychology</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course10" class="course-checkbox hidden">
+                            <label for="course10" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Sociology</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course11" class="course-checkbox hidden">
+                            <label for="course11" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Statistics</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course12" class="course-checkbox hidden">
+                            <label for="course12" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Geography</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course13" class="course-checkbox hidden">
+                            <label for="course13" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Engineering</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course14" class="course-checkbox hidden">
+                            <label for="course14" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Medicine</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="course15" class="course-checkbox hidden">
+                            <label for="course15" class="flex items-center border rounded p-3 cursor-pointer hover:bg-green-600 hover:text-white transition-colors duration-200">
+                                <i class="fas fa-book text-lg mr-2"></i>
+                                <span>Law</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center mt-6">
+                    <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                        <i class="fas fa-check mr-2"></i>
+                        Register
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

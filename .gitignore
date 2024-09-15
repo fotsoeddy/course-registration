@@ -1,3 +1,4 @@
+
 # Virtual environment folder (venv)
 venv/
 env/
@@ -34,3 +35,6 @@ Thumbs.db         # Windows
 *.out
 *.err
 *.~lock.*
+=======
+venv
+env
