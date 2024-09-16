@@ -1,0 +1,33 @@
+<div class="collapse d-md-flex flex-column p-3 sidebar" id="sidebarMenu">
+
+    <h4 class="text-center mb-4">Teacher Panel</h4>
+
+    <a href="{% url 'teacher_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}">
+        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+    </a>
+    
+    <a href="{% url 'create_course' %}" class="nav-link {% if request.resolver_match.url_name == 'create_course' %}active{% endif %}">
+        <i class="fas fa-book me-2"></i>Create Course
+    </a>
+    
+    <a href="{% url 'view_courses' %}" class="nav-link {% if request.resolver_match.url_name == 'view_courses' %}active{% endif %}">
+        <i class="fas fa-list-ul me-2"></i>View Courses
+    </a>
+    
+    <a href="{% url 'upload_marks' %}" class="nav-link {% if request.resolver_match.url_name == 'upload_marks' %}active{% endif %}">
+        <i class="fas fa-upload me-2"></i>Upload Marks
+    </a>
+    
+    <a href="{% url 'view_students' %}" class="nav-link {% if request.resolver_match.url_name == 'view_students' %}active{% endif %}">
+        <i class="fas fa-users me-2"></i>View Students
+    </a>
+    
+    <a href="{% url 'settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+        <i class="fas fa-cog me-2"></i>Settings
+    </a>
+    
+    <a href="{% url 'logout' %}" class="nav-link {% if request.resolver_match.url_name == 'logout' %}active{% endif %}">
+        <i class="fas fa-sign-out-alt me-2"></i>Logout
+    </a>
+
+</div>

@@ -1,0 +1,88 @@
+
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+body {
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.sidebar {
+    background-color: #0e9612;
+    min-height: 100vh;
+    padding-top: 20px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.sidebar h4 {
+    color: #fac304;
+}
+
+.sidebar a {
+    color: white;
+    font-weight: 500;
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+.sidebar a.active {
+    background-color: #fac304;
+    color: #008300;
+}
+
+.sidebar a:hover {
+    background-color: #fac304;
+    color: #008300;
+}
+
+.topbar {
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.topbar .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.card {
+    border: none;
+}
+
+/* Sidebar specific styles for mobile view */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 70%; /* Sidebar will cover 70% of the screen width */
+        height: 100%;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .sidebar-backdrop {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+
+    .sidebar-backdrop.show {
+        display: block;
+    }
+}
+
+

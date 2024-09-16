@@ -32,17 +32,33 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, UserProfile
+from django.contrib.auth import authenticate, login as auth_login
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import UserProfile
+
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(request, username=email, password=password)
+
         if user is not None:
             auth_login(request, user)
-            return redirect('student_dashboard')
+
+            # Redirect based on user type
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+            elif user.is_staff:
+                return redirect('teacher_dashboard')
+            else:
+                return redirect('student_dashboard')
         else:
             messages.error(request, "Invalid email or password.")
     return render(request, 'students/login.html')
+
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.mail import EmailMessage
@@ -102,11 +118,22 @@ def register_view(request):
         else:
             messages.error(request, "Passwords do not match.")
     return render(request, 'students/register.html')
-
 @login_required
 def student_dashboard(request):
-    profile = UserProfile.objects.get(user=request.user)
-    return render(request, 'students/student_dashboard.html', {'profile': profile})
+    # Check if the logged-in user is a student (not admin or teacher)
+    if not request.user.is_superuser and not request.user.is_staff:
+        try:
+            profile = UserProfile.objects.get(user=request.user)
+            return render(request, 'students/student_dashboard.html', {'profile': profile})
+        except UserProfile.DoesNotExist:
+            messages.error(request, 'User profile does not exist.')
+            return redirect('login')
+    else:
+        # Redirect based on the user type
+        if request.user.is_superuser:
+            return redirect('admin_dashboard')
+        elif request.user.is_staff:
+            return redirect('teacher_dashboard')
 
 
 @login_required
