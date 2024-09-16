@@ -6,6 +6,15 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import random
 import string
+# views.py
+from django.shortcuts import redirect
+from django.contrib.auth import logout as auth_logout
+from django.contrib import messages
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.decorators import login_required
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from students.models import CustomUser  # Import your CustomUser model
@@ -81,3 +90,33 @@ def admin_dashboard(request):
 @login_required
 def teacher_dashboard(request):
     return render(request, 'faculty/teacher_dashboard.html')
+
+
+@login_required
+def logout_view(request):
+    if request.user.is_authenticated:
+        email = request.user.email
+        auth_logout(request)
+        
+        # Prepare email
+        context = {
+            'email': email,
+            'status_message': _('You have been logged out successfully.'),
+        }
+        subject = _('Goodbye from Eddy Organization')
+        message = render_to_string('emails/user_logged_out.html', context)
+        
+        email_message = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=None,  # Replace with your email address if necessary
+            to=[email]
+        )
+        email_message.content_subtype = 'html'
+        email_message.send()
+        
+        messages.info(request, "You have been logged out.")
+        return redirect('student_login')  # Adjust this to your login URL
+    else:
+        return redirect('student_login')
+    
