@@ -24,4 +24,5 @@ from django.shortcuts import redirect
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('students.urls')),
+    path('faculty/', include('faculty.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
