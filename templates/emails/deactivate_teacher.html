@@ -1,0 +1,14 @@
+{% extends "emails/base_email.html" %}
+
+{% block content %}
+    <div class="text-center">
+        <h1 class="text-xl font-bold text-red-600 mb-4">Your Account Has Been Deactivated, {{ first_name }} {{ last_name }}</h1>
+        <p class="text-lg text-gray-700">Hello {{ email }},</p>
+        <p class="text-gray-600 mb-4">We regret to inform you that your account has been deactivated by the Eddy Organization.</p>
+
+        <p class="text-gray-600 mb-4">If you believe this was a mistake or need further clarification, please contact our support team.</p>
+
+        <p class="text-gray-700">Best regards,</p>
+        <p class="text-gray-700">The Eddy Organization Team</p>
+    </div>
+{% endblock %}

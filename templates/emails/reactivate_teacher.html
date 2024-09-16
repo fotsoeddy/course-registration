@@ -1,0 +1,14 @@
+{% extends "emails/base_email.html" %}
+
+{% block content %}
+    <div class="text-center">
+        <h1 class="text-xl font-bold text-green-600 mb-4">Your Account Has Been Reactivated, {{ first_name }} {{ last_name }}</h1>
+        <p class="text-lg text-gray-700">Hello {{ email }},</p>
+        <p class="text-gray-600 mb-4">We are pleased to inform you that your account has been successfully reactivated.</p>
+
+        <p class="text-gray-600 mb-4">You can now log back in using your existing login details. If you have any issues accessing your account, please contact our support team.</p>
+
+        <p class="text-gray-700">Best regards,</p>
+        <p class="text-gray-700">The Eddy Organization Team</p>
+    </div>
+{% endblock %}

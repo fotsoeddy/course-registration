@@ -45,6 +45,9 @@ def generate_random_password(length=8):
     password = ''.join(secrets.choice(characters) for i in range(length))
     return password
 
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+
 @login_required
 def admin_dashboard(request):
     # Fetch all teachers (users marked as staff)
@@ -52,41 +55,106 @@ def admin_dashboard(request):
     teacher_count = teachers.count()
 
     if request.method == 'POST':
+        action = request.POST.get('action')
+        teacher_id = request.POST.get('teacher_id')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
 
-        # Generate a random password
-        password = generate_random_password()
-
         try:
-            # Create the teacher with email as username
-            teacher = CustomUser.objects.create_user(
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                password=password,
-                username=email,  # Use email as username
-                is_staff=True,   # Mark user as staff
-                is_superuser=False  # Ensure the user is not a superuser
-            )
+            teacher = CustomUser.objects.get(id=teacher_id)
 
-            # Send email with the login details
-            subject = "Your Teacher Account Details"
-            message = f"Dear {first_name},\n\nYour teacher account has been created.\nEmail: {email}\nPassword: {password}\nPlease log in and change your password after the first login.\n\nBest Regards,\nMy Organization"
-            from_email = settings.DEFAULT_FROM_EMAIL
-            recipient_list = [email]
+            if action == 'edit':
+                old_first_name = teacher.first_name
+                old_last_name = teacher.last_name
+                old_email = teacher.email
 
-            send_mail(subject, message, from_email, recipient_list)
+                # Update teacher details
+                teacher.first_name = first_name
+                teacher.last_name = last_name
+                teacher.email = email
+                teacher.username = email  # Ensure username is updated with the email
+                teacher.save()
 
-            messages.success(request, f'Teacher {first_name} {last_name} created and login details emailed.')
-        except Exception as e:
-            messages.error(request, f'Error creating teacher: {str(e)}')
+                # Prepare and send email
+                context = {
+                    'old_first_name': old_first_name,
+                    'old_last_name': old_last_name,
+                    'old_email': old_email,
+                    'new_first_name': first_name,
+                    'new_last_name': last_name,
+                    'new_email': email,
+                    'action': 'edited'
+                }
+                subject = 'Teacher Account Updated'
+                message = render_to_string('emails/edit_teacher.html', context)
+                email_msg = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=None,
+                    to=[email]
+                )
+                email_msg.content_subtype = 'html'
+                email_msg.send()
+
+                messages.success(request, 'Teacher details updated and email notification sent.')
+
+            elif action == 'deactivate':
+                teacher.is_active = False
+                teacher.save()
+
+                # Prepare and send email
+                context = {
+                    'first_name': teacher.first_name,
+                    'last_name': teacher.last_name,
+                    'email': teacher.email,
+                    'action': 'deactivated'
+                }
+                subject = 'Teacher Account Deactivated'
+                message = render_to_string('emails/deactivate_teacher.html', context)
+                email_msg = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=None,
+                    to=[teacher.email]
+                )
+                email_msg.content_subtype = 'html'
+                email_msg.send()
+
+                messages.success(request, 'Teacher account deactivated and email notification sent.')
+
+            elif action == 'reactivate':
+                teacher.is_active = True
+                teacher.save()
+
+                # Prepare and send email
+                context = {
+                    'first_name': teacher.first_name,
+                    'last_name': teacher.last_name,
+                    'email': teacher.email,
+                    'action': 'reactivated'
+                }
+                subject = 'Teacher Account Reactivated'
+                message = render_to_string('emails/reactivate_teacher.html', context)
+                email_msg = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=None,
+                    to=[teacher.email]
+                )
+                email_msg.content_subtype = 'html'
+                email_msg.send()
+
+                messages.success(request, 'Teacher account reactivated and email notification sent.')
+
+        except CustomUser.DoesNotExist:
+            messages.error(request, 'Teacher not found.')
 
     return render(request, 'faculty/admin_dashboard.html', {
         'teachers': teachers,
         'teacher_count': teacher_count
     })
+
 @login_required
 def teacher_dashboard(request):
     return render(request, 'faculty/teacher_dashboard.html')
@@ -120,3 +188,47 @@ def logout_view(request):
     else:
         return redirect('student_login')
     
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from students.models import CustomUser, UserProfile
+from django.contrib import messages
+
+@login_required
+def create_course(request):
+    if request.method == 'POST':
+        course_name = request.POST.get('course_name')
+        # Implement course creation logic here
+        messages.success(request, "Course created successfully!")
+        return redirect('admin_dashboard')
+    return render(request, 'faculty/create_course.html')
+
+@login_required
+def view_courses(request):
+    # Replace this with actual course retrieval logic
+    courses = []  # Replace with actual course data
+    return render(request, 'faculty/view_courses.html', {'courses': courses})
+
+@login_required
+def upload_marks_view(request):
+    if request.method == 'POST':
+        student_id = request.POST.get('student_id')
+        course_id = request.POST.get('course_id')
+        marks = request.POST.get('marks')
+        # Implement marks upload logic here
+        messages.success(request, "Marks uploaded successfully!")
+        return redirect('admin_dashboard')
+    return render(request, 'faculty/upload_marks.html')
+
+@login_required
+def view_students_view(request):
+    students = CustomUser.objects.all()  # Replace with actual student data retrieval
+    return render(request, 'faculty/view_students.html', {'students': students})
+
+@login_required
+def settings_view(request):
+    if request.method == 'POST':
+        # Implement settings update logic here
+        messages.success(request, "Settings updated successfully!")
+        return redirect('settings')
+    return render(request, 'faculty/settings.html')

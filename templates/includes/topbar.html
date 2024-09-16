@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<div class="topbar d-flex justify-content-between align-items-center">
+    <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="{% trans 'Toggle navigation' %}">
+        <i class="fas fa-bars fa-2x"></i>
+    </button>
+    <h2 class="mb-0">{% trans 'Dashboard' %}</h2>
+    <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if user.profile_picture %}
+            <img src="{{ user.profile_picture.url }}" alt="{% trans 'User Avatar' %}" class="rounded-circle me-2" style="width: 30px; height: 30px;">
+            {% else %}
+            <i class="fas fa-user-circle fa-2x me-2"></i>
+            {% endif %}
+            {% trans 'Admin' %}
+        </button>
+
+    </div>
+</div>
