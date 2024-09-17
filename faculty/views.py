@@ -53,6 +53,8 @@ def admin_dashboard(request):
     # Fetch all teachers (users marked as staff)
     teachers = CustomUser.objects.filter(is_staff=True, is_superuser=False)
     teacher_count = teachers.count()
+    teacher = request.user
+
 
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -193,15 +195,58 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from students.models import CustomUser, UserProfile
 from django.contrib import messages
+from .models import Course
+
 
 @login_required
 def create_course(request):
+    courses = Course.objects.filter(is_active=True)  # Fetch only active courses
+
     if request.method == 'POST':
-        course_name = request.POST.get('course_name')
-        # Implement course creation logic here
-        messages.success(request, "Course created successfully!")
-        return redirect('admin_dashboard')
-    return render(request, 'faculty/create_course.html')
+        action = request.POST.get('action')
+
+        if action == 'create':
+            # Handle course creation
+            course_name = request.POST.get('course_name')
+            course_id = request.POST.get('course_id')
+            course_department = request.POST.get('course_department')
+            credit_value = request.POST.get('course_credit')
+            year_of_study = request.POST.get('course_year')
+            description = request.POST.get('description')
+
+            Course.objects.create(
+                name=course_name,
+                creator=request.user,
+                description=description,
+                course_id=course_id,
+                course_department=course_department,
+                credit_value=credit_value,
+                year_of_study=year_of_study
+            )
+            messages.success(request, "Course created successfully!")
+            return redirect('create_course')
+
+        elif action == 'edit':
+            # Handle course editing
+            course_id = request.POST.get('course_id')
+            course = get_object_or_404(Course, id=course_id)
+            course.name = request.POST.get('course_name')
+            course.description = request.POST.get('description')
+            course.save()
+            messages.success(request, "Course updated successfully!")
+            return redirect('create_course')
+
+        elif action == 'deactivate':
+            # Handle course deactivation
+            course_id = request.POST.get('course_id')
+            course = get_object_or_404(Course, id=course_id)
+            course.is_active = False
+            course.save()
+            messages.success(request, "Course deactivated successfully!")
+            return redirect('create_course')
+
+    return render(request, 'faculty/teacher/create_course.html', {'courses': courses})
+
 
 @login_required
 def view_courses(request):
