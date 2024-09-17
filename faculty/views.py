@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import random
 import string
+from django.core.paginator import Paginator
 # views.py
 from django.shortcuts import redirect
 from django.contrib.auth import logout as auth_logout
@@ -200,11 +201,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Course
+from django.core.paginator import Paginator
+from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
+from .models import Course
 
 @login_required
 def create_course(request):
-    courses = Course.objects.filter(is_active=True)  # Fetch only active courses
-
     if request.method == 'POST':
         action = request.POST.get('action')
 
@@ -217,16 +220,13 @@ def create_course(request):
             year_of_study = request.POST.get('course_year')
             description = request.POST.get('description')
 
-            # Check if the department already exists
-            department_exists = Course.objects.filter(course_department=course_department_name).exists()
-
             # Create course
             Course.objects.create(
                 name=course_name,
                 creator=request.user,
                 description=description,
                 course_id=course_id,
-                course_department=course_department_name,   # Use existing department if it exists
+                course_department=course_department_name,
                 credit_value=credit_value,
                 year_of_study=year_of_study
             )
@@ -252,7 +252,25 @@ def create_course(request):
             messages.success(request, "Course deactivated successfully!")
             return redirect('create_course')
 
-    return render(request, 'faculty/teacher/create_course.html', {'courses': courses})
+    courses = Course.objects.filter(is_active=True)  # Fetch only active courses
+
+    # Group courses by department
+    department_courses = {}
+    for course in courses:
+        if course.course_department not in department_courses:
+            department_courses[course.course_department] = []
+        department_courses[course.course_department].append(course)
+
+    # Paginate courses within each department
+    department_page_numbers = request.GET.get('department_page', {})
+    paginated_departments = {}
+    for department, courses_list in department_courses.items():
+        paginator = Paginator(courses_list, 5)  # 5 courses per page
+        page_number = department_page_numbers.get(department, 1)
+        paginated_departments[department] = paginator.get_page(page_number)
+
+    # Pass paginated departments to the template
+    return render(request, 'faculty/teacher/create_course.html', {'paginated_departments': paginated_departments})
 
 
 @login_required

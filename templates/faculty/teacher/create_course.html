@@ -1,17 +1,17 @@
 {% extends 'faculty/base.html' %}
 
 {% block content %}
-<div class="container mx-auto py-6">
+<div class="container my-4">
     <h2 class="text-2xl font-bold mb-4">Manage Courses</h2>
 
     <!-- Button to trigger course creation modal -->
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4" data-bs-toggle="modal" data-bs-target="#createCourseModal">
+    <button class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#createCourseModal">
         <i class="fas fa-plus"></i> Create New Course
     </button>
 
     <!-- Course creation modal -->
     <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createCourseModalLabel">Create New Course</h5>
@@ -49,98 +49,135 @@
     </div>
 
     <!-- Display courses by department -->
-    <div class="mt-6">
-        {% if courses %}
-            {% regroup courses by course_department as department_groups %}
-            {% for department_group in department_groups %}
-                <h3 class="text-xl font-bold mt-4">{{ department_group.grouper }}</h3>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Course Name</th>
-                            <th>Course ID</th>
-                            <th>Credit Value</th>
-                            <th>Year of Study</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for course in department_group.list %}
-                        <tr class="{% cycle 'bg-gray-100' 'bg-white' %}">
-                            <td>{{ course.name }}</td>
-                            <td>{{ course.course_id }}</td>
-                            <td>{{ course.credit_value }}</td>
-                            <td>{{ course.year_of_study }}</td>
-                            <td>
-                                <!-- Edit Button -->
-                                <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#editCourseModal{{ course.id }}">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <!-- Deactivate Button -->
-                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#deactivateCourseModal{{ course.id }}">
-                                    <i class="fas fa-times"></i> Deactivate
-                                </button>
-                            </td>
-                        </tr>
+    <div class="mt-4">
+        {% for department, page_obj in paginated_departments.items %}
+            <h3 class="text-xl mt-4"><span class="font-bold">Department:</span> {{ department }}</h3>
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Course ID</th>
+                        <th>Credit Value</th>
+                        <th>Year of Study</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in page_obj %}
+                    <tr>
+                        <td>{{ course.name }}</td>
+                        <td>{{ course.course_id }}</td>
+                        <td>{{ course.credit_value }}</td>
+                        <td>{{ course.year_of_study }}</td>
+                        <td>
+                            <!-- Edit Button -->
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editCourseModal{{ course.id }}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <!-- Deactivate Button -->
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deactivateCourseModal{{ course.id }}">
+                                <i class="fas fa-times"></i> Deactivate
+                            </button>
+                        </td>
+                    </tr>
 
-                        <!-- Edit Course Modal -->
-                        <div class="modal fade" id="editCourseModal{{ course.id }}" tabindex="-1" aria-labelledby="editCourseModalLabel{{ course.id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editCourseModalLabel{{ course.id }}">Edit Course</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form method="post" action="{% url 'create_course' %}">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="action" value="edit">
-                                            <input type="hidden" name="course_id" value="{{ course.id }}">
-                                            <div class="mb-3">
-                                                <label for="editCourseName{{ course.id }}" class="form-label">Course Name</label>
-                                                <input type="text" name="course_name" class="form-control" id="editCourseName{{ course.id }}" value="{{ course.name }}" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="editCourseDescription{{ course.id }}" class="form-label">Course Description</label>
-                                                <textarea name="description" class="form-control" id="editCourseDescription{{ course.id }}">{{ course.description }}</textarea>
-                                            </div>
-                                            <button type="submit" class="btn btn-success">Update Course</button>
-                                        </form>
-                                    </div>
+                    <!-- Edit Course Modal -->
+                    <div class="modal fade" id="editCourseModal{{ course.id }}" tabindex="-1" aria-labelledby="editCourseModalLabel{{ course.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editCourseModalLabel{{ course.id }}">Edit Course</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post" action="{% url 'create_course' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="edit">
+                                        <input type="hidden" name="course_id" value="{{ course.id }}">
+                                        <div class="mb-3">
+                                            <label for="editCourseName{{ course.id }}" class="form-label">Course Name</label>
+                                            <input type="text" name="course_name" class="form-control" id="editCourseName{{ course.id }}" value="{{ course.name }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="editCourseDescription{{ course.id }}" class="form-label">Course Description</label>
+                                            <textarea name="description" class="form-control" id="editCourseDescription{{ course.id }}">{{ course.description }}</textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-success">Update Course</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Deactivate Course Modal -->
-                        <div class="modal fade" id="deactivateCourseModal{{ course.id }}" tabindex="-1" aria-labelledby="deactivateCourseModalLabel{{ course.id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="deactivateCourseModalLabel{{ course.id }}">Deactivate Course</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Are you sure you want to deactivate this course: {{ course.name }}?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <form method="post" action="{% url 'create_course' %}">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="action" value="deactivate">
-                                            <input type="hidden" name="course_id" value="{{ course.id }}">
-                                            <button type="submit" class="btn btn-danger">Deactivate</button>
-                                        </form>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    </div>
+                    <!-- Deactivate Course Modal -->
+                    <div class="modal fade" id="deactivateCourseModal{{ course.id }}" tabindex="-1" aria-labelledby="deactivateCourseModalLabel{{ course.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deactivateCourseModalLabel{{ course.id }}">Deactivate Course</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to deactivate the course "{{ course.name }}"?</p>
+                                    <form method="post" action="{% url 'create_course' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="deactivate">
+                                        <input type="hidden" name="course_id" value="{{ course.id }}">
+                                        <button type="submit" class="btn btn-danger">Deactivate</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endfor %}
-        {% else %}
-            <p>No courses available. Please create one.</p>
-        {% endif %}
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&department_page={{ department }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&department_page={{ department }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endfor %}
     </div>
 </div>
+
+<!-- Message Handling with Transitions -->
+<div id="message" class="fixed bottom-4 right-4 p-4 bg-success text-white rounded shadow-lg d-none" style="transition: opacity 0.5s;">
+    <p id="message-text"></p>
+</div>
+
+<script>
+    // Function to show messages
+    function showMessage(message, color) {
+        const messageDiv = document.getElementById('message');
+        const messageText = document.getElementById('message-text');
+        messageText.textContent = message;
+        messageDiv.classList.remove('d-none');
+        messageDiv.classList.add('bg-' + color);
+
+        // Transition and auto-hide after 6 seconds
+        setTimeout(() => {
+            messageDiv.style.opacity = 0;
+            setTimeout(() => {
+                messageDiv.classList.add('d-none');
+                messageDiv.style.opacity = 1;
+                messageDiv.classList.remove('bg-' + color);
+            }, 500); // Duration of the fade-out transition
+        }, 6000);
+    }
+</script>
 {% endblock %}
