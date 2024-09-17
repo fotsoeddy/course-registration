@@ -1,0 +1,31 @@
+{% extends 'students/student_dashboard_base.html' %}
+
+{% block title %}Course Registration{% endblock %}
+
+{% block content %}
+<div class="p-8">
+    <h2 class="text-2xl font-semibold mb-4">Course Registration</h2>
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr>
+                <th class="py-2">Course ID</th>
+                <th class="py-2">Course Name</th>
+                <th class="py-2">Credit Value</th>
+                <th class="py-2">Select</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr class="border-t">
+                <td class="py-2">{{ course.course_id }}</td>
+                <td class="py-2">{{ course.name }}</td>
+                <td class="py-2">{{ course.credit_value }}</td>
+                <td class="py-2">
+                    <input type="checkbox" name="selected_courses" value="{{ course.id }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

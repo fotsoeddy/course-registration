@@ -1,36 +1,8 @@
-{% extends 'students/base.html' %}
+{% extends 'students/student_dashboard_base.html' %}
 
 {% block title %}Student Dashboard{% endblock %}
 
-{% block header %}
-    <div class="bg-white shadow-md rounded-lg w-full flex justify-between items-center p-6" style="background-color: #0e9612;">
-        <div class="flex items-center space-x-4">
-            <!-- Student Profile Picture Placeholder -->
-            <div class="bg-white p-2 rounded-full border-4 border-white w-16 h-16 flex justify-center items-center shadow-lg">
-                {% if profile.picture %}
-                    <img src="{{ profile.picture.url }}" alt="Profile Picture" class="rounded-full object-cover w-full h-full">
-                {% else %}
-                    <p>No profile picture available</p>
-                {% endif %}
-            </div>
-            
 
-            <div>
-                <h2 class="text-white text-xl font-semibold">{{ user.get_full_name }}</h2>
-                <p class="text-white text-sm">Matriculation Number: {{ profile.user.matriculation }}</p>
-                <p class="text-white text-sm">Field of Study: {{ profile.field_of_study }}</p>
-                <p class="text-white text-sm">Academic Year: {{ profile.academic_year }}</p>
-            </div>
-        </div>
-        <!-- Logout Button -->
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="text-white bg-red-600 hover:bg-red-700 font-bold py-2 px-4 rounded">
-                <i class="fas fa-sign-out-alt mr-2"></i> Logout
-            </button>
-        </form>
-    </div>
-{% endblock %}
 
 {% block content %}
     <div class="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -67,19 +39,3 @@
     </div>
 {% endblock %}
 
-{% block footer %}
-    <div class="p-4 rounded-b-lg flex justify-between lg:justify-evenly" style="background-color: #0e9612;">
-        <button class="text-white flex items-center space-x-2 border-b-2 border-white pb-1 cursor-pointer">
-            <i class="fas fa-home text-xl"></i>
-            <span>Home</span>
-        </button>
-        <button class="text-white flex items-center space-x-2 cursor-pointer">
-            <i class="fas fa-user text-xl"></i>
-            <span>Student Profile</span>
-        </button>
-        <button class="text-white flex items-center space-x-2 cursor-pointer">
-            <i class="fas fa-cog text-xl"></i>
-            <span>Settings</span>
-        </button>
-    </div>
-{% endblock %}

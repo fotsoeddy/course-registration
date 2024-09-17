@@ -135,10 +135,37 @@ def student_dashboard(request):
         elif request.user.is_staff:
             return redirect('teacher_dashboard')
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from faculty.models import Course
+from .models import UserProfile  # Ensure this is the correct import
 
 @login_required
 def course_registration(request):
-    return render(request, 'students/course_registration.html')
+    # Check if the logged-in user is a student (not an admin or a teacher)
+    if not request.user.is_superuser and not request.user.is_staff:
+        try:
+            # Retrieve the student's profile
+            profile = UserProfile.objects.get(user=request.user)
+            
+            # Retrieve only the active courses
+            courses = Course.objects.filter(is_active=True)
+            
+            # Pass both profile and course data to the template
+            return render(request, 'students/course_registration.html', {
+                'profile': profile,
+                'courses': courses,
+            })
+        except UserProfile.DoesNotExist:
+            messages.error(request, 'User profile does not exist.')
+            return redirect('login')
+    else:
+        # Redirect to the appropriate dashboard based on user type
+        if request.user.is_superuser:
+            return redirect('admin_dashboard')
+        elif request.user.is_staff:
+            return redirect('teacher_dashboard')
 
 @login_required
 def student_form(request):

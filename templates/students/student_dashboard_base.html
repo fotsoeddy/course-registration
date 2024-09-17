@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Université de la Cote{% endblock %}</title>
+
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="flex flex-col min-h-screen bg-gray-100">
+    <!-- Header Section -->
+    <header>
+        <div class="bg-white shadow-md rounded-lg w-full flex justify-between items-center p-6" style="background-color: #0e9612;">
+            <div class="flex items-center space-x-4">
+                <!-- Student Profile Picture Placeholder -->
+                <div class="bg-white p-2 rounded-full border-4 border-white w-16 h-16 flex justify-center items-center shadow-lg">
+                    {% if profile.picture %}
+                        <img src="{{ profile.picture.url }}" alt="Profile Picture" class="rounded-full object-cover w-full h-full">
+                    {% else %}
+                        <p>No profile picture available</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <h2 class="text-white text-xl font-semibold">{{ user.get_full_name }}</h2>
+                    <p class="text-white text-sm">Matriculation Number: {{ profile.user.matriculation }}</p>
+                    <p class="text-white text-sm">Field of Study: {{ profile.field_of_study }}</p>
+                    <p class="text-white text-sm">Academic Year: {{ profile.academic_year }}</p>
+                </div>
+            </div>
+            <!-- Logout Button -->
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="text-white bg-red-600 hover:bg-red-700 font-bold py-2 px-4 rounded">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="p-4 rounded-b-lg flex justify-between lg:justify-evenly" style="background-color: #0e9612;">
+            <button class="text-white flex items-center space-x-2 border-b-2 border-white pb-1 cursor-pointer">
+                <i class="fas fa-home text-xl"></i>
+                <span>Home</span>
+            </button>
+            <button class="text-white flex items-center space-x-2 cursor-pointer">
+                <i class="fas fa-user text-xl"></i>
+                <span>Student Profile</span>
+            </button>
+            <button class="text-white flex items-center space-x-2 cursor-pointer">
+                <i class="fas fa-cog text-xl"></i>
+                <span>Settings</span>
+            </button>
+        </div>
+    </footer>
+</body>
+</html>
