@@ -196,7 +196,10 @@ from django.contrib.auth.decorators import login_required
 from students.models import CustomUser, UserProfile
 from django.contrib import messages
 from .models import Course
-
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import Course
 
 @login_required
 def create_course(request):
@@ -209,17 +212,21 @@ def create_course(request):
             # Handle course creation
             course_name = request.POST.get('course_name')
             course_id = request.POST.get('course_id')
-            course_department = request.POST.get('course_department')
+            course_department_name = request.POST.get('course_department')
             credit_value = request.POST.get('course_credit')
             year_of_study = request.POST.get('course_year')
             description = request.POST.get('description')
 
+            # Check if the department already exists
+            department_exists = Course.objects.filter(course_department=course_department_name).exists()
+
+            # Create course
             Course.objects.create(
                 name=course_name,
                 creator=request.user,
                 description=description,
                 course_id=course_id,
-                course_department=course_department,
+                course_department=course_department_name,   # Use existing department if it exists
                 credit_value=credit_value,
                 year_of_study=year_of_study
             )
