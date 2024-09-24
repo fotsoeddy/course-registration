@@ -278,6 +278,7 @@ def create_course(request):
             course_id = request.POST.get('course_id')
             course_department_name = request.POST.get('course_department')
             credit_value = request.POST.get('course_credit')
+            semester = request.POST.get('semester')
             year_of_study = request.POST.get('course_year')
             description = request.POST.get('description')
 
@@ -287,6 +288,7 @@ def create_course(request):
                 creator=request.user,
                 description=description,
                 course_id=course_id,
+                semester=semester,
                 course_department=course_department_name,
                 credit_value=credit_value,
                 year_of_study=year_of_study

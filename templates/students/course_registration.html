@@ -3,8 +3,20 @@
 {% block title %}Course Registration{% endblock %}
 
 {% block content %}
+<!-- Back to Dashboard Button with Icon -->
+<div class="mb-4">
+    <a href="{% url 'student_dashboard' %}" class="inline-flex items-center bg-gray-600 text-white font-bold py-2 px-4 rounded">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9 5a1 1 0 011-1h5a1 1 0 110 2h-4v8h4a1 1 0 110 2h-5a1 1 0 01-1-1V5z" clip-rule="evenodd" />
+            <path d="M7.707 10.707a1 1 0 010-1.414L10.586 6.414a1 1 0 111.414 1.414L9.414 10l2.586 2.586a1 1 0 01-1.414 1.414l-2.879-2.879z" />
+        </svg>
+        Back to Dashboard
+    </a>
+</div>
+
 <div class="p-6 bg-white shadow-md rounded-lg">
-    <h2 class="text-xl font-semibold mb-4">Course Registration</h2>
+    <!-- Centered Title -->
+    <h2 class="text-2xl font-semibold text-center mb-4">Course Registration</h2>
 
     <!-- Filter Form -->
     <form method="get" class="mb-4 flex justify-between items-center">
@@ -26,18 +38,32 @@
             </select>
         </div>
 
-        <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded">Filter</button>
+        <!-- Filter and Clear Filter Buttons with Icons -->
+        <div class="flex space-x-2">
+            <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 2a8 8 0 106.32 3.548l.045.042A8 8 0 1010 2z" clip-rule="evenodd" />
+                </svg>
+                Filter
+            </button>
+            <a href="{% url 'course_registration' %}" class="bg-gray-500 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 2a8 8 0 106.32 3.548l.045.042A8 8 0 1010 2z" clip-rule="evenodd" />
+                </svg>
+                Clear Filter
+            </a>
+        </div>
     </form>
 
     <!-- Courses Table -->
     <table class="w-full bg-gray-100 rounded-lg shadow-lg">
         <thead>
-            <tr class="bg-gray-800 text-white">
+            <tr class="bg-gray-800 text-white text-left">
                 <th class="p-3">Course ID</th>
                 <th class="p-3">Course Name</th>
                 <th class="p-3">Department</th>
                 <th class="p-3">Credit Value</th>
-                <th class="p-3">Actions</th>
+                <th class="p-3 text-center">Select</th>
             </tr>
         </thead>
         <tbody>
@@ -47,8 +73,8 @@
                     <td class="p-3">{{ course.name }}</td>
                     <td class="p-3">{{ course.course_department }}</td>
                     <td class="p-3">{{ course.credit_value }}</td>
-                    <td class="p-3">
-                        <a href="#" class="text-green-600 font-bold">Register</a>
+                    <td class="p-3 text-center">
+                        <input type="checkbox" name="selected_courses" value="{{ course.id }}" class="form-checkbox">
                     </td>
                 </tr>
             {% empty %}
@@ -58,5 +84,10 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Register Button -->
+    <div class="mt-4 text-right">
+        <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded">Register</button>
+    </div>
 </div>
 {% endblock %}
