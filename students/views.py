@@ -135,10 +135,63 @@ def student_dashboard(request):
         elif request.user.is_staff:
             return redirect('teacher_dashboard')
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from faculty.models import Course
+from .models import UserProfile  # Ensure this is the correct import
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from faculty.models import Course
+from students.models import UserProfile
 
 @login_required
 def course_registration(request):
-    return render(request, 'students/course_registration.html')
+    # Check if the logged-in user is a student (not an admin or a teacher)
+    if not request.user.is_superuser and not request.user.is_staff:
+        try:
+            # Retrieve the student's profile
+            profile = UserProfile.objects.get(user=request.user)
+            
+            # Initialize the query to retrieve only active courses
+            courses = Course.objects.filter(is_active=True)
+            
+            # Get the selected semester and year from the form (GET request)
+            selected_semester = request.GET.get('semester')
+            selected_year = request.GET.get('year_of_study')
+            
+            # Filter by semester if provided
+            if selected_semester:
+                courses = courses.filter(semester=selected_semester)
+            
+            # Filter by year of study if provided
+            if selected_year:
+                courses = courses.filter(year_of_study=selected_year)
+            
+            # List of available semesters and years for filtering
+            semesters = Course.SEMESTER_CHOICES
+            years_of_study = Course.objects.values_list('year_of_study', flat=True).distinct()
+
+            # Pass profile, courses, semesters, and years data to the template
+            return render(request, 'students/course_registration.html', {
+                'profile': profile,
+                'courses': courses,
+                'semesters': semesters,
+                'years_of_study': years_of_study,
+                'selected_semester': selected_semester,
+                'selected_year': selected_year,
+            })
+        except UserProfile.DoesNotExist:
+            messages.error(request, 'User profile does not exist.')
+            return redirect('login')
+    else:
+        # Redirect to the appropriate dashboard based on user type
+        if request.user.is_superuser:
+            return redirect('admin_dashboard')
+        elif request.user.is_staff:
+            return redirect('teacher_dashboard')
 
 @login_required
 def student_form(request):
