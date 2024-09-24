@@ -3,27 +3,58 @@
 {% block title %}Course Registration{% endblock %}
 
 {% block content %}
-<div class="p-8">
-    <h2 class="text-2xl font-semibold mb-4">Course Registration</h2>
-    <table class="min-w-full bg-white">
+<div class="p-6 bg-white shadow-md rounded-lg">
+    <h2 class="text-xl font-semibold mb-4">Course Registration</h2>
+
+    <!-- Filter Form -->
+    <form method="get" class="mb-4 flex justify-between items-center">
+        <div>
+            <label for="semester" class="font-bold">Semester:</label>
+            <select name="semester" id="semester" class="p-2 rounded border">
+                <option value="First" {% if semester == 'First' %}selected{% endif %}>First Semester</option>
+                <option value="Second" {% if semester == 'Second' %}selected{% endif %}>Second Semester</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="year" class="font-bold">Year of Study:</label>
+            <select name="year" id="year" class="p-2 rounded border">
+                <option value="1" {% if year_of_study == 1 %}selected{% endif %}>1st Year</option>
+                <option value="2" {% if year_of_study == 2 %}selected{% endif %}>2nd Year</option>
+                <option value="3" {% if year_of_study == 3 %}selected{% endif %}>3rd Year</option>
+                <option value="4" {% if year_of_study == 4 %}selected{% endif %}>4th Year</option>
+            </select>
+        </div>
+
+        <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded">Filter</button>
+    </form>
+
+    <!-- Courses Table -->
+    <table class="w-full bg-gray-100 rounded-lg shadow-lg">
         <thead>
-            <tr>
-                <th class="py-2">Course ID</th>
-                <th class="py-2">Course Name</th>
-                <th class="py-2">Credit Value</th>
-                <th class="py-2">Select</th>
+            <tr class="bg-gray-800 text-white">
+                <th class="p-3">Course ID</th>
+                <th class="p-3">Course Name</th>
+                <th class="p-3">Department</th>
+                <th class="p-3">Credit Value</th>
+                <th class="p-3">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for course in courses %}
-            <tr class="border-t">
-                <td class="py-2">{{ course.course_id }}</td>
-                <td class="py-2">{{ course.name }}</td>
-                <td class="py-2">{{ course.credit_value }}</td>
-                <td class="py-2">
-                    <input type="checkbox" name="selected_courses" value="{{ course.id }}">
-                </td>
-            </tr>
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="p-3">{{ course.course_id }}</td>
+                    <td class="p-3">{{ course.name }}</td>
+                    <td class="p-3">{{ course.course_department }}</td>
+                    <td class="p-3">{{ course.credit_value }}</td>
+                    <td class="p-3">
+                        <a href="#" class="text-green-600 font-bold">Register</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="p-3 text-center text-gray-600">No courses available for the selected semester and year.</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>

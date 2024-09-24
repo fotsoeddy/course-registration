@@ -39,6 +39,13 @@ from students.models import CustomUser
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+
+# Helper function to generate random password
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+import secrets, string
 
 # Helper function to generate random password
 def generate_random_password(length=8):
@@ -46,28 +53,68 @@ def generate_random_password(length=8):
     password = ''.join(secrets.choice(characters) for i in range(length))
     return password
 
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
-
 @login_required
 def admin_dashboard(request):
     # Fetch all teachers (users marked as staff)
     teachers = CustomUser.objects.filter(is_staff=True, is_superuser=False)
     teacher_count = teachers.count()
-    teacher = request.user
-
 
     if request.method == 'POST':
         action = request.POST.get('action')
-        teacher_id = request.POST.get('teacher_id')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
 
-        try:
-            teacher = CustomUser.objects.get(id=teacher_id)
+        if action == 'create':
+            # Retrieve form data for new teacher creation
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            email = request.POST.get('email')
 
-            if action == 'edit':
+            # Generate random password
+            password = generate_random_password()
+
+            try:
+                # Create the new teacher
+                new_teacher = CustomUser.objects.create_user(
+                    username=email,  # Username set to email
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    is_staff=True,  # Set teacher as staff
+                    password=password  # Use the generated password
+                )
+                new_teacher.save()
+
+                # Prepare and send welcome email with the generated password
+                context = {
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'email': email,
+                    'password': password
+                }
+                subject = 'Welcome to Our School - Teacher Account Created'
+                message = render_to_string('emails/Welcome_teacher.html', context)
+                email_msg = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=None,
+                    to=[email]
+                )
+                email_msg.content_subtype = 'html'
+                email_msg.send()
+
+                messages.success(request, 'Teacher created successfully, and email sent with login credentials.')
+
+            except Exception as e:
+                messages.error(request, f'Error creating teacher: {e}')
+
+        elif action == 'edit':
+            teacher_id = request.POST.get('teacher_id')
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            email = request.POST.get('email')
+
+            try:
+                teacher = CustomUser.objects.get(id=teacher_id)
+
                 old_first_name = teacher.first_name
                 old_last_name = teacher.last_name
                 old_email = teacher.email
@@ -79,7 +126,7 @@ def admin_dashboard(request):
                 teacher.username = email  # Ensure username is updated with the email
                 teacher.save()
 
-                # Prepare and send email
+                # Prepare and send email about the update
                 context = {
                     'old_first_name': old_first_name,
                     'old_last_name': old_last_name,
@@ -102,11 +149,18 @@ def admin_dashboard(request):
 
                 messages.success(request, 'Teacher details updated and email notification sent.')
 
-            elif action == 'deactivate':
+            except CustomUser.DoesNotExist:
+                messages.error(request, 'Teacher not found.')
+
+        elif action == 'deactivate':
+            teacher_id = request.POST.get('teacher_id')
+
+            try:
+                teacher = CustomUser.objects.get(id=teacher_id)
                 teacher.is_active = False
                 teacher.save()
 
-                # Prepare and send email
+                # Send deactivation email
                 context = {
                     'first_name': teacher.first_name,
                     'last_name': teacher.last_name,
@@ -126,11 +180,18 @@ def admin_dashboard(request):
 
                 messages.success(request, 'Teacher account deactivated and email notification sent.')
 
-            elif action == 'reactivate':
+            except CustomUser.DoesNotExist:
+                messages.error(request, 'Teacher not found.')
+
+        elif action == 'reactivate':
+            teacher_id = request.POST.get('teacher_id')
+
+            try:
+                teacher = CustomUser.objects.get(id=teacher_id)
                 teacher.is_active = True
                 teacher.save()
 
-                # Prepare and send email
+                # Send reactivation email
                 context = {
                     'first_name': teacher.first_name,
                     'last_name': teacher.last_name,
@@ -150,8 +211,8 @@ def admin_dashboard(request):
 
                 messages.success(request, 'Teacher account reactivated and email notification sent.')
 
-        except CustomUser.DoesNotExist:
-            messages.error(request, 'Teacher not found.')
+            except CustomUser.DoesNotExist:
+                messages.error(request, 'Teacher not found.')
 
     return render(request, 'faculty/admin_dashboard.html', {
         'teachers': teachers,
@@ -302,3 +363,5 @@ def settings_view(request):
         messages.success(request, "Settings updated successfully!")
         return redirect('settings')
     return render(request, 'faculty/settings.html')
+
+

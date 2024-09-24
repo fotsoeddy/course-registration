@@ -5,11 +5,14 @@
         <h1 class="text-2xl font-bold text-blue-600 mb-4">Your Profile Has Been Updated, {{ first_name }} {{ last_name }}</h1>
         <p class="text-lg text-gray-700">Hello {{ email }},</p>
         <p class="text-gray-600 mb-4">We wanted to inform you that your profile details have been successfully updated in the system.</p>
-
+        {% for teacher in teachers %}
         <h2 class="text-xl font-semibold">Updated Information:</h2>
-        <p class="text-gray-700 mb-2"><strong>First Name:</strong> {{ first_name }}</p>
+        <p class="text-gray-700 mb-2"><strong>First Name:</strong> {{ teacher.first_name }}</p>
         <p class="text-gray-700 mb-2"><strong>Last Name:</strong> {{ last_name }}</p>
         <p class="text-gray-700 mb-2"><strong>Email:</strong> {{ email }}</p>
+
+        {% endfor %}
+        <p class="text-gray-700 mb-2"><strong>Temporary Password:</strong> {{ password }}</p>
 
         <p class="text-gray-600 mb-4">If you did not make these changes or have any concerns, please contact our support team immediately.</p>
 
