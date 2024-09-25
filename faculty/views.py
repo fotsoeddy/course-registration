@@ -357,13 +357,53 @@ def upload_marks_view(request):
 def view_students_view(request):
     students = CustomUser.objects.all()  # Replace with actual student data retrieval
     return render(request, 'faculty/view_students.html', {'students': students})
-
 @login_required
-def settings_view(request):
+def teacher_settings(request):
     if request.method == 'POST':
-        # Implement settings update logic here
-        messages.success(request, "Settings updated successfully!")
-        return redirect('settings')
-    return render(request, 'faculty/settings.html')
+        # Handle password change
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Ensure the user is a teacher (staff but not superuser)
+        teacher = request.user
+        if not teacher.is_staff or teacher.is_superuser:
+            messages.error(request, "You are not authorized to change password.")
+            return redirect('teacher_settings')
+
+        # Validate the current password
+        if not teacher.check_password(current_password):
+            messages.error(request, 'Current password is incorrect.')
+            return redirect('teacher_settings')
+
+        # Ensure the new password matches the confirmation
+        if new_password != confirm_password:
+            messages.error(request, 'New password and confirmation do not match.')
+            return redirect('teacher_settings')
+
+        # Set the new password
+        teacher.set_password(new_password)
+        teacher.save()
+
+        # Send confirmation email
+        subject = 'Password Changed Successfully'
+        message = render_to_string('emails/password_changed.html', {'teacher': teacher})
+        email_msg = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=None,
+            to=[teacher.email]
+        )
+        email_msg.content_subtype = 'html'
+        
+        try:
+            email_msg.send()
+        except Exception as e:
+            messages.error(request, 'Your password was changed, but we couldn’t send a confirmation email. Please check your email settings.')
+
+        messages.success(request, 'Your password has been changed successfully. Please log in again.')
+        return redirect('student_login')
+
+    return render(request, 'faculty/teacher/teacher_settings.html')
 
 

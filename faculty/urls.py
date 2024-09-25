@@ -12,5 +12,5 @@ urlpatterns = [
     path('upload-marks/', views.upload_marks_view, name='upload_marks'),
     path('view-students/', views.view_students_view, name='view_students'),
     path('logout/', views.logout_view, name='logout'),
-    path('settings/', views.settings_view, name='settings'),
+    path('teacher_settings/', views.teacher_settings, name='teacher_settings'),
 ]
