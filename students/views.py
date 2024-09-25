@@ -1,6 +1,6 @@
 
 
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
@@ -196,7 +196,24 @@ def course_registration(request):
             return redirect('admin_dashboard')
         elif request.user.is_staff:
             return redirect('teacher_dashboard')
+from faculty.models import Registration  # Import your Registration model
 
+@login_required
+def unregister_course(request, registration_id):
+    # Ensure the user is not a superuser or staff member
+    if not request.user.is_superuser and not request.user.is_staff:
+        # Get the registration object
+        registration = get_object_or_404(Registration, id=registration_id, student=request.user)
+
+        # Delete the registration
+        registration.delete()
+
+        messages.success(request, 'You have successfully unregistered from the course.')
+        return redirect('student_form')  # Redirect to the student form or the appropriate page
+
+    # If the user is superuser or staff, handle accordingly
+    messages.error(request, "You are not authorized to unregister from this course.")
+    return redirect('student_form')
 @login_required
 def student_form(request):
     try:

@@ -14,6 +14,7 @@
                     <th class="p-3">Course Name</th>
                     <th class="p-3">Department</th>
                     <th class="p-3">Credit Value</th>
+                    <th class="p-3">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,6 +24,27 @@
                         <td class="p-3">{{ registration.course.name }}</td>
                         <td class="p-3">{{ registration.course.course_department }}</td>
                         <td class="p-3">{{ registration.course.credit_value }}</td>
+                        <td class="p-3">
+                            <!-- Trash Icon for Unregister -->
+                            <button class="text-red-500 hover:text-red-700" onclick="toggleModal('confirmModal{{ registration.id }}')">
+                                <i class="fas fa-trash"></i> <!-- Font Awesome Trash Icon -->
+                            </button>
+
+                            <!-- Modal for Confirmation -->
+                            <div id="confirmModal{{ registration.id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                                <div class="bg-white rounded-lg p-5">
+                                    <h5 class="text-lg font-semibold mb-4">Confirm Unregister</h5>
+                                    <p>Are you sure you want to unregister from {{ registration.course.name }}?</p>
+                                    <div class="flex justify-end mt-4">
+                                        <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2" onclick="toggleModal('confirmModal{{ registration.id }}')">Cancel</button>
+                                        <form action="{% url 'unregister_course' registration.id %}" method="POST" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Unregister</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -31,4 +53,17 @@
         <p class="text-gray-600">You have not registered for any courses yet.</p>
     {% endif %}
 </div>
+
+<!-- Include Font Awesome for Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+    function toggleModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal.classList.contains('hidden')) {
+            modal.classList.remove('hidden');
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+</script>
 {% endblock %}
