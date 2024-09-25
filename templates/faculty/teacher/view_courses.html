@@ -1,0 +1,33 @@
+{% extends 'faculty/base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Course Registration Summary</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Year of Study</th>
+                <th>Total Registered Students</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in course_student_counts %}
+            <tr>
+                <td>{{ course.name }}</td>
+                <td>{{ course.year_of_study }}</td>
+                <td>{{ course.total_students }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No courses found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+{%endblock %}

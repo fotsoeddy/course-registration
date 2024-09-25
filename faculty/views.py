@@ -1,3 +1,4 @@
+from itertools import count
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -257,7 +258,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from students.models import CustomUser, UserProfile
 from django.contrib import messages
-from .models import Course
+from .models import Course, Registration
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -334,13 +335,24 @@ def create_course(request):
 
     # Pass paginated departments to the template
     return render(request, 'faculty/teacher/create_course.html', {'paginated_departments': paginated_departments})
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Course, Registration
+from django.db.models import Count  # Make sure to import Count
 
 @login_required
 def view_courses(request):
-    # Replace this with actual course retrieval logic
-    courses = []  # Replace with actual course data
-    return render(request, 'faculty/view_courses.html', {'courses': courses})
+    course_student_counts = (
+        Course.objects
+        .annotate(total_students=Count('registration__student', distinct=True))  # Use Count instead of count
+        .values('name', 'year_of_study', 'total_students')
+        .order_by('year_of_study')
+    )
+    
+    context = {
+        'course_student_counts': course_student_counts,
+    }
+    return render(request, 'faculty/teacher/view_courses.html', context)
 
 @login_required
 def upload_marks_view(request):
