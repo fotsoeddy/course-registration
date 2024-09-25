@@ -209,7 +209,7 @@ def unregister_course(request, registration_id):
         registration.delete()
 
         messages.success(request, 'You have successfully unregistered from the course.')
-        return redirect('student_form')  # Redirect to the student form or the appropriate page
+        return redirect('student_form') 
 
     # If the user is superuser or staff, handle accordingly
     messages.error(request, "You are not authorized to unregister from this course.")

@@ -6,6 +6,15 @@
 <div class="p-6 bg-white shadow-md rounded-lg">
     <h2 class="text-xl font-semibold mb-4">Your Registered Courses</h2>
 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="p-4 mb-4 text-white bg-green-600 rounded">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <a href="{% url 'student_dashboard' %}" class="text-blue-500 hover:underline mb-4 inline-block">Go to Dashboard</a>
+
     {% if registrations %}
         <table class="w-full bg-gray-100 rounded-lg shadow-lg">
             <thead>
@@ -67,3 +76,5 @@
     }
 </script>
 {% endblock %}
+
+
