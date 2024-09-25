@@ -23,7 +23,7 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 # views.py
 from django.shortcuts import render
-from .models import UserProfile
+from faculty.models import Registration
 
 
 from django.shortcuts import render
@@ -134,6 +134,8 @@ def student_dashboard(request):
             return redirect('admin_dashboard')
         elif request.user.is_staff:
             return redirect('teacher_dashboard')
+        
+
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -146,35 +148,38 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from faculty.models import Course
 from students.models import UserProfile
-
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from faculty.models import Course
+from django.contrib.auth.decorators import login_required
 @login_required
 def course_registration(request):
-    # Check if the logged-in user is a student (not an admin or a teacher)
     if not request.user.is_superuser and not request.user.is_staff:
         try:
-            # Retrieve the student's profile
-            profile = UserProfile.objects.get(user=request.user)
-            
-            # Initialize the query to retrieve only active courses
+            profile = UserProfile.objects.get(user=request.user)  # Get the UserProfile
             courses = Course.objects.filter(is_active=True)
             
-            # Get the selected semester and year from the form (GET request)
             selected_semester = request.GET.get('semester')
-            selected_year = request.GET.get('year_of_study')
+            selected_year = request.GET.get('year')
             
-            # Filter by semester if provided
             if selected_semester:
                 courses = courses.filter(semester=selected_semester)
-            
-            # Filter by year of study if provided
             if selected_year:
                 courses = courses.filter(year_of_study=selected_year)
             
-            # List of available semesters and years for filtering
             semesters = Course.SEMESTER_CHOICES
             years_of_study = Course.objects.values_list('year_of_study', flat=True).distinct()
 
-            # Pass profile, courses, semesters, and years data to the template
+            if request.method == 'POST':
+                selected_courses = request.POST.getlist('selected_courses')
+                for course_id in selected_courses:
+                    course = Course.objects.get(id=course_id)
+                    # Use profile.user to assign the student
+                    Registration.objects.create(student=profile.user, course=course)
+
+                messages.success(request, 'Courses registered successfully!')
+                return redirect('student_form')  # Redirect to student form after registration
+
             return render(request, 'students/course_registration.html', {
                 'profile': profile,
                 'courses': courses,
@@ -187,7 +192,6 @@ def course_registration(request):
             messages.error(request, 'User profile does not exist.')
             return redirect('login')
     else:
-        # Redirect to the appropriate dashboard based on user type
         if request.user.is_superuser:
             return redirect('admin_dashboard')
         elif request.user.is_staff:
@@ -195,7 +199,17 @@ def course_registration(request):
 
 @login_required
 def student_form(request):
-    return render(request, 'students/student_form.html')
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        registrations = Registration.objects.filter(student=profile.user)
+
+        return render(request, 'students/student_form.html', {
+            'profile': profile,
+            'registrations': registrations,
+        })
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'User profile does not exist.')
+        return redirect('login')
 
 @login_required
 def academic_structure(request):

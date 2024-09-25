@@ -68,3 +68,7 @@ class Mark(models.Model):
 
     def __str__(self):
         return f"{self.student.username} - {self.course.name} - {self.grade}"
+
+class Registration(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.db import models
+from django.conf import settings
+from faculty.models import Course
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)  # Ensure email is unique
@@ -34,4 +37,7 @@ class UserProfile(models.Model):
         return self.user.username
 
 
-# oNeaxqB0SRVOnbTud9
+
+
+
+

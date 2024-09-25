@@ -3,13 +3,10 @@
 {% block title %}Course Registration{% endblock %}
 
 {% block content %}
-<!-- Back to Dashboard Button with Icon -->
+<!-- Back to Dashboard Button with Font Awesome Icon -->
 <div class="mb-4">
     <a href="{% url 'student_dashboard' %}" class="inline-flex items-center bg-gray-600 text-white font-bold py-2 px-4 rounded">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M9 5a1 1 0 011-1h5a1 1 0 110 2h-4v8h4a1 1 0 110 2h-5a1 1 0 01-1-1V5z" clip-rule="evenodd" />
-            <path d="M7.707 10.707a1 1 0 010-1.414L10.586 6.414a1 1 0 111.414 1.414L9.414 10l2.586 2.586a1 1 0 01-1.414 1.414l-2.879-2.879z" />
-        </svg>
+        <i class="fas fa-arrow-left mr-2"></i>
         Back to Dashboard
     </a>
 </div>
@@ -19,7 +16,7 @@
     <h2 class="text-2xl font-semibold text-center mb-4">Course Registration</h2>
 
     <!-- Filter Form -->
-    <form method="get" class="mb-4 flex justify-between items-center">
+    <form method="get" action="{% url 'course_registration' %}" class="mb-4 flex justify-between items-center">
         <div>
             <label for="semester" class="font-bold">Semester:</label>
             <select name="semester" id="semester" class="p-2 rounded border">
@@ -31,63 +28,69 @@
         <div>
             <label for="year" class="font-bold">Year of Study:</label>
             <select name="year" id="year" class="p-2 rounded border">
-                <option value="1" {% if year_of_study == 1 %}selected{% endif %}>1st Year</option>
-                <option value="2" {% if year_of_study == 2 %}selected{% endif %}>2nd Year</option>
-                <option value="3" {% if year_of_study == 3 %}selected{% endif %}>3rd Year</option>
-                <option value="4" {% if year_of_study == 4 %}selected{% endif %}>4th Year</option>
+                <option value="1" {% if year_of_study == '1' %}selected{% endif %}>1st Year</option>
+                <option value="2" {% if year_of_study == '2' %}selected{% endif %}>2nd Year</option>
+                <option value="3" {% if year_of_study == '3' %}selected{% endif %}>3rd Year</option>
+                <option value="4" {% if year_of_study == '4' %}selected{% endif %}>4th Year</option>
             </select>
         </div>
 
-        <!-- Filter and Clear Filter Buttons with Icons -->
+        <!-- Filter and Clear Filter Buttons with Font Awesome Icons -->
         <div class="flex space-x-2">
             <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 2a8 8 0 106.32 3.548l.045.042A8 8 0 1010 2z" clip-rule="evenodd" />
-                </svg>
+                <i class="fas fa-filter mr-1"></i>
                 Filter
             </button>
             <a href="{% url 'course_registration' %}" class="bg-gray-500 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 2a8 8 0 106.32 3.548l.045.042A8 8 0 1010 2z" clip-rule="evenodd" />
-                </svg>
+                <i class="fas fa-times mr-1"></i>
                 Clear Filter
             </a>
         </div>
     </form>
 
-    <!-- Courses Table -->
-    <table class="w-full bg-gray-100 rounded-lg shadow-lg">
-        <thead>
-            <tr class="bg-gray-800 text-white text-left">
-                <th class="p-3">Course ID</th>
-                <th class="p-3">Course Name</th>
-                <th class="p-3">Department</th>
-                <th class="p-3">Credit Value</th>
-                <th class="p-3 text-center">Select</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for course in courses %}
-                <tr class="bg-white border-b hover:bg-gray-50">
-                    <td class="p-3">{{ course.course_id }}</td>
-                    <td class="p-3">{{ course.name }}</td>
-                    <td class="p-3">{{ course.course_department }}</td>
-                    <td class="p-3">{{ course.credit_value }}</td>
-                    <td class="p-3 text-center">
-                        <input type="checkbox" name="selected_courses" value="{{ course.id }}" class="form-checkbox">
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5" class="p-3 text-center text-gray-600">No courses available for the selected semester and year.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Courses Table and Registration Form -->
+    <form method="post" action="{% url 'course_registration' %}">
+        {% csrf_token %}
+        <!-- Include hidden fields to preserve filters during POST -->
+        <input type="hidden" name="semester" value="{{ semester }}">
+        <input type="hidden" name="year" value="{{ year_of_study }}">
 
-    <!-- Register Button -->
-    <div class="mt-4 text-right">
-        <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded">Register</button>
-    </div>
+        <table class="w-full bg-gray-100 rounded-lg shadow-lg">
+            <thead>
+                <tr class="bg-gray-800 text-white text-left">
+                    <th class="p-3">Course ID</th>
+                    <th class="p-3">Course Name</th>
+                    <th class="p-3">Department</th>
+                    <th class="p-3">Credit Value</th>
+                    <th class="p-3 text-center">Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <td class="p-3">{{ course.course_id }}</td>
+                        <td class="p-3">{{ course.name }}</td>
+                        <td class="p-3">{{ course.course_department }}</td>
+                        <td class="p-3">{{ course.credit_value }}</td>
+                        <td class="p-3 text-center">
+                            <input type="checkbox" name="selected_courses" value="{{ course.id }}" class="form-checkbox">
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="p-3 text-center text-gray-600">No courses available for the selected semester and year.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Register Button -->
+        <div class="mt-4 text-right">
+            <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                <i class="fas fa-clipboard-check mr-1"></i>
+                Register
+            </button>
+        </div>
+    </form>
 </div>
 {% endblock %}
