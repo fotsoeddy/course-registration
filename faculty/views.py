@@ -353,17 +353,84 @@ def view_courses(request):
         'course_student_counts': course_student_counts,
     }
     return render(request, 'faculty/teacher/view_courses.html', context)
-
+# faculty/views.py
+import openpyxl
+from django.shortcuts import render, redirect
+from .forms import UploadMarksForm
+from .models import Mark, Course
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.conf import settings
+from students.models import CustomUser  # Adjust this import as necessary
+import openpyxl
+from django.shortcuts import render, redirect
+from .forms import UploadMarksForm
+from .models import Mark, Course
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from students.models import CustomUser  # Adjust this import as necessary
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import UploadMarksForm
+from .models import Mark, Course  # Adjust according to your app structure
+import pandas as pd  # Ensure you have pandas installed for Excel processing
+import pandas as pd
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import UploadMarksForm
+from .models import Mark, Course
+from students.models import  CustomUser
 @login_required
-def upload_marks_view(request):
+def upload_marks(request):
+    marks = []  # List to hold uploaded marks for display
     if request.method == 'POST':
-        student_id = request.POST.get('student_id')
-        course_id = request.POST.get('course_id')
-        marks = request.POST.get('marks')
-        # Implement marks upload logic here
-        messages.success(request, "Marks uploaded successfully!")
-        return redirect('admin_dashboard')
-    return render(request, 'faculty/upload_marks.html')
+        form = UploadMarksForm(request.POST, request.FILES)
+        if form.is_valid():
+            course = form.cleaned_data['course']
+            mark_type = form.cleaned_data['mark_type']
+            file = request.FILES['file']
+
+            # Process the uploaded Excel file
+            try:
+                # Read the uploaded Excel file
+                df = pd.read_excel(file)
+
+                # Validate and store the marks
+                for index, row in df.iterrows():
+                    matricule = row['matricules']
+                    marks_value = row['Marks']
+
+                    # Check if the student is registered for the course
+                    try:
+                        student = CustomUser.objects.get(matriculation=matricule)
+                        # Check if the student is registered for the course
+                        if not Registration.objects.filter(student=student, course=course).exists():
+
+                            messages.warning(request, f"{student.get_full_name()} is not registered for this course.")
+                            continue
+
+                        # Create or update the Mark entry
+                        mark, created = Mark.objects.update_or_create(
+                            student=student,
+                            course=course,
+                            mark_type=mark_type,
+                            defaults={'marks': marks_value}
+                        )
+                        # Add the mark to the list for display
+                        marks.append({'student': student, 'marks': marks_value})
+                    except CustomUser.DoesNotExist:
+                        messages.error(request, f"Student with matricule {matricule} does not exist.")
+                
+                messages.success(request, "Marks uploaded successfully!")
+            except Exception as e:
+                messages.error(request, f"An error occurred: {str(e)}")
+    
+    else:
+        form = UploadMarksForm()
+
+    return render(request, 'faculty/teacher/upload_marks.html', {'form': form, 'marks': marks})
 
 @login_required
 def view_students_view(request):

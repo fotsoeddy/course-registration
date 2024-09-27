@@ -64,10 +64,21 @@ class Registration(models.Model):
 
 
 class Mark(models.Model):
+    COURSE_MARK_CHOICES = [
+        ('CA', 'Continuous Assessment'),
+        ('Exam', 'Examination'),
+    ]
+    
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='marks')
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='marks')
     grade = models.CharField(max_length=10)
+    mark_type = models.CharField(max_length=10, choices=COURSE_MARK_CHOICES, null=True)
     date_assigned = models.DateField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('student', 'course', 'mark_type')  # Enforce uniqueness
+
     def __str__(self):
-        return f"{self.student.username} - {self.course.name} - {self.grade}"
+        return f"{self.student.username} - {self.course.name} - {self.grade} ({self.mark_type})"
+
+

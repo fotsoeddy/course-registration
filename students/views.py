@@ -69,7 +69,7 @@ def register_view(request):
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
-        matriculation = request.POST.get('matriculation')
+        matriculation = request.POST.get('matriculation')  # Get matriculation from the form
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         field_of_study = request.POST.get('field_of_study')
@@ -78,7 +78,14 @@ def register_view(request):
 
         if password == confirm_password:
             try:
-                user = CustomUser.objects.create_user(username=email, password=password, email=email, first_name=first_name, last_name=last_name)
+                user = CustomUser.objects.create_user(
+                    username=email,
+                    password=password,
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    matriculation=matriculation  # Save matriculation here
+                )
                 user.save()
 
                 # Create user profile
@@ -101,7 +108,7 @@ def register_view(request):
                 }
                 subject = 'Welcome to Eddy Organization'
                 message = render_to_string('emails/welcome.html', context)
-                
+
                 email_msg = EmailMessage(
                     subject=subject,
                     body=message,
@@ -118,6 +125,7 @@ def register_view(request):
         else:
             messages.error(request, "Passwords do not match.")
     return render(request, 'students/register.html')
+
 @login_required
 def student_dashboard(request):
     # Check if the logged-in user is a student (not admin or teacher)

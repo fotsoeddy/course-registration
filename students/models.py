@@ -26,6 +26,8 @@ class CustomUser(AbstractUser):
         help_text='Specific permissions for this user.',
         verbose_name='user permissions'
     )
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)

@@ -1,0 +1,32 @@
+{% extends 'faculty/base.html' %}
+
+{% block content %}
+<h2>Upload Marks</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Upload Marks</button>
+</form>
+
+{% if marks %}
+    <h2 class="mt-5">Uploaded Marks</h2>
+    <table class="min-w-full bg-white border border-gray-300 mb-4">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 border-b">Matriculation</th>
+                <th class="py-2 px-4 border-b">Student Name</th>
+                <th class="py-2 px-4 border-b">Mark</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mark in marks %}
+                <tr>
+                    <td class="py-2 px-4 border-b">{{ mark.student.matricule }}</td>
+                    <td class="py-2 px-4 border-b">{{ mark.student.get_full_name }}</td>
+                    <td class="py-2 px-4 border-b">{{ mark.marks }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}
