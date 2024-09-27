@@ -382,55 +382,77 @@ from django.contrib.auth.decorators import login_required
 from .forms import UploadMarksForm
 from .models import Mark, Course
 from students.models import  CustomUser
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.contrib import messages
+import pandas as pd
+from .models import  Registration, Mark, Course
+from students.models import CustomUser
 @login_required
 def upload_marks(request):
     marks = []  # List to hold uploaded marks for display
+    courses = Course.objects.all()  # Fetch all courses for selection
+    course_name = ""  # Variable to hold course name for display
+
     if request.method == 'POST':
-        form = UploadMarksForm(request.POST, request.FILES)
-        if form.is_valid():
-            course = form.cleaned_data['course']
-            mark_type = form.cleaned_data['mark_type']
-            file = request.FILES['file']
+        course_id = request.POST.get('course')
+        mark_type = request.POST.get('mark_type')
+        file = request.FILES.get('file')
 
-            # Process the uploaded Excel file
+        # Ensure course and file are provided
+        if not course_id or not mark_type or not file:
+            messages.error(request, "Please select a course, mark type, and upload a file.")
+        else:
+            # Fetch the selected course
             try:
-                # Read the uploaded Excel file
-                df = pd.read_excel(file)
+                course = Course.objects.get(id=course_id)
+                course_name = course.name  # Get the course name for display
 
-                # Validate and store the marks
-                for index, row in df.iterrows():
-                    matricule = row['matricules']
-                    marks_value = row['Marks']
+                # Process the uploaded Excel file
+                try:
+                    # Read the uploaded Excel file using pandas
+                    df = pd.read_excel(file)
 
-                    # Check if the student is registered for the course
-                    try:
-                        student = CustomUser.objects.get(matriculation=matricule)
-                        # Check if the student is registered for the course
-                        if not Registration.objects.filter(student=student, course=course).exists():
+                    # Validate and store the marks
+                    for index, row in df.iterrows():
+                        matricule = row['matricules']
+                        marks_value = row['Marks']
 
-                            messages.warning(request, f"{student.get_full_name()} is not registered for this course.")
-                            continue
+                        # Check if the student exists and is registered for the course
+                        try:
+                            student = CustomUser.objects.get(matriculation=matricule)
+                            if not Registration.objects.filter(student=student, course=course).exists():
+                                messages.warning(request, f"{student.get_full_name()} is not registered for this course.")
+                                continue
 
-                        # Create or update the Mark entry
-                        mark, created = Mark.objects.update_or_create(
-                            student=student,
-                            course=course,
-                            mark_type=mark_type,
-                            defaults={'marks': marks_value}
-                        )
-                        # Add the mark to the list for display
-                        marks.append({'student': student, 'marks': marks_value})
-                    except CustomUser.DoesNotExist:
-                        messages.error(request, f"Student with matricule {matricule} does not exist.")
-                
-                messages.success(request, "Marks uploaded successfully!")
-            except Exception as e:
-                messages.error(request, f"An error occurred: {str(e)}")
-    
-    else:
-        form = UploadMarksForm()
+                            # Create or update the Mark entry
+                            mark, created = Mark.objects.update_or_create(
+                                student=student,
+                                course=course,
+                                mark_type=mark_type,
+                                defaults={'marks': marks_value}  # Ensure this matches your model's field
+                            )
+                            # Add the mark to the list for display
+                            marks.append({'student': student, 'marks': marks_value})
 
-    return render(request, 'faculty/teacher/upload_marks.html', {'form': form, 'marks': marks})
+                        except CustomUser.DoesNotExist:
+                            messages.error(request, f"Student with matricule {matricule} does not exist.")
+
+                    messages.success(request, "Marks uploaded successfully!")
+
+                except Exception as e:
+                    messages.error(request, f"An error occurred while processing the file: {str(e)}")
+
+            except Course.DoesNotExist:
+                messages.error(request, "Selected course does not exist.")
+
+    context = {
+        'courses': courses,  # Pass the list of courses to the template
+        'marks': marks,      # Pass the uploaded marks for display
+        'course_name': course_name  # Pass the course name for the title
+    }
+    return render(request, 'faculty/teacher/upload_marks.html', context)
+
 
 @login_required
 def view_students_view(request):

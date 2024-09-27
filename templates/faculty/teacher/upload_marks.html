@@ -1,32 +1,77 @@
 {% extends 'faculty/base.html' %}
 
 {% block content %}
-<h2>Upload Marks</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Upload Marks</button>
-</form>
+<div class="container my-5">
+    <!-- Page Header -->
+    <h2 class="mb-4 text-center">Upload Marks</h2>
 
-{% if marks %}
-    <h2 class="mt-5">Uploaded Marks</h2>
-    <table class="min-w-full bg-white border border-gray-300 mb-4">
-        <thead>
-            <tr>
-                <th class="py-2 px-4 border-b">Matriculation</th>
-                <th class="py-2 px-4 border-b">Student Name</th>
-                <th class="py-2 px-4 border-b">Mark</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for mark in marks %}
-                <tr>
-                    <td class="py-2 px-4 border-b">{{ mark.student.matricule }}</td>
-                    <td class="py-2 px-4 border-b">{{ mark.student.get_full_name }}</td>
-                    <td class="py-2 px-4 border-b">{{ mark.marks }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
+    <!-- Upload Form -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <!-- Course Selection -->
+                <div class="form-group">
+                    <label for="course">Select Course</label>
+                    <select name="course" id="course" class="form-control">
+                        {% for course in courses %}
+                            <option value="{{ course.id }}">{{ course.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Mark Type Selection -->
+                <div class="form-group mt-3">
+                    <label for="mark_type">Select Mark Type</label>
+                    <select name="mark_type" id="mark_type" class="form-control">
+                        <option value="CA">Continuous Assessment (CA)</option>
+                        <option value="EXAM">Examination</option>
+                    </select>
+                </div>
+
+                <!-- File Upload Field -->
+                <div class="form-group mt-3">
+                    <label for="file">Upload Excel File</label>
+                    <input type="file" name="file" id="file" class="form-control" required>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary mt-4 w-100">Upload Marks</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Display Uploaded Marks -->
+    {% if marks %}
+        <div class="mt-5">
+            <!-- Course Name as Title -->
+            <h2 class="text-center mb-4">{{ course_name }} - Uploaded Marks</h2> <!-- Pass course_name in the view -->
+
+            <!-- Marks Table -->
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Matriculation</th>
+                        <th scope="col">Student Name</th>
+                        <th scope="col">Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mark in marks %}
+                        <tr>
+                            <td>{{ mark.student.matriculation }}</td>  <!-- Matriculation field corrected -->
+                            <td>{{ mark.student.get_full_name }}</td>
+                            <td>{{ mark.marks }}</td> <!-- Correctly reference the 'grade' field -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <!-- No marks message -->
+        <div class="alert alert-info text-center mt-5" role="alert">
+            No marks uploaded yet.
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
