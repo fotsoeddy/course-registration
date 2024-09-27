@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+import students
 from students.models import CustomUser  # Import your CustomUser model
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -388,51 +389,56 @@ from django.contrib import messages
 import pandas as pd
 from .models import  Registration, Mark, Course
 from students.models import CustomUser
+import logging
+logger = logging.getLogger(__name__)
+import logging
+
+logger = logging.getLogger(__name__)
+
 @login_required
 def upload_marks(request):
-    marks = []  # List to hold uploaded marks for display
-    courses = Course.objects.all()  # Fetch all courses for selection
-    course_name = ""  # Variable to hold course name for display
+    marks = []
+    courses = Course.objects.all()
+    course_name = ""
 
     if request.method == 'POST':
         course_id = request.POST.get('course')
         mark_type = request.POST.get('mark_type')
         file = request.FILES.get('file')
 
-        # Ensure course and file are provided
         if not course_id or not mark_type or not file:
             messages.error(request, "Please select a course, mark type, and upload a file.")
         else:
-            # Fetch the selected course
             try:
                 course = Course.objects.get(id=course_id)
-                course_name = course.name  # Get the course name for display
+                course_name = course.name
 
-                # Process the uploaded Excel file
                 try:
-                    # Read the uploaded Excel file using pandas
                     df = pd.read_excel(file)
 
-                    # Validate and store the marks
                     for index, row in df.iterrows():
                         matricule = row['matricules']
                         marks_value = row['Marks']
 
-                        # Check if the student exists and is registered for the course
                         try:
                             student = CustomUser.objects.get(matriculation=matricule)
                             if not Registration.objects.filter(student=student, course=course).exists():
                                 messages.warning(request, f"{student.get_full_name()} is not registered for this course.")
                                 continue
 
-                            # Create or update the Mark entry
+                            # Save or update mark
                             mark, created = Mark.objects.update_or_create(
                                 student=student,
                                 course=course,
                                 mark_type=mark_type,
-                                defaults={'marks': marks_value}  # Ensure this matches your model's field
+                                defaults={'grade': marks_value}
                             )
-                            # Add the mark to the list for display
+
+                            if created:
+                                logger.info(f"Created mark for {student.username} in {course.name} with {mark_type}: {marks_value}")
+                            else:
+                                logger.info(f"Updated mark for {student.username} in {course.name} with {mark_type}: {marks_value}")
+
                             marks.append({'student': student, 'marks': marks_value})
 
                         except CustomUser.DoesNotExist:
@@ -447,11 +453,15 @@ def upload_marks(request):
                 messages.error(request, "Selected course does not exist.")
 
     context = {
-        'courses': courses,  # Pass the list of courses to the template
-        'marks': marks,      # Pass the uploaded marks for display
-        'course_name': course_name  # Pass the course name for the title
+        'courses': courses,
+        'marks': marks,
+        'course_name': course_name
     }
     return render(request, 'faculty/teacher/upload_marks.html', context)
+
+
+
+
 
 
 @login_required

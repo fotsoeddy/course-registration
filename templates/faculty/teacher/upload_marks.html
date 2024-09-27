@@ -2,15 +2,12 @@
 
 {% block content %}
 <div class="container my-5">
-    <!-- Page Header -->
-    <h2 class="mb-4 text-center">Upload Marks</h2>
+    <h2 class="mb-4 text-center">Upload Marks for {{ course_name }}</h2>
 
-    <!-- Upload Form -->
     <div class="card shadow-sm">
         <div class="card-body">
             <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                 {% csrf_token %}
-                <!-- Course Selection -->
                 <div class="form-group">
                     <label for="course">Select Course</label>
                     <select name="course" id="course" class="form-control">
@@ -20,7 +17,6 @@
                     </select>
                 </div>
 
-                <!-- Mark Type Selection -->
                 <div class="form-group mt-3">
                     <label for="mark_type">Select Mark Type</label>
                     <select name="mark_type" id="mark_type" class="form-control">
@@ -29,25 +25,20 @@
                     </select>
                 </div>
 
-                <!-- File Upload Field -->
                 <div class="form-group mt-3">
                     <label for="file">Upload Excel File</label>
                     <input type="file" name="file" id="file" class="form-control" required>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit" class="btn btn-primary mt-4 w-100">Upload Marks</button>
             </form>
         </div>
     </div>
 
-    <!-- Display Uploaded Marks -->
     {% if marks %}
         <div class="mt-5">
-            <!-- Course Name as Title -->
-            <h2 class="text-center mb-4">{{ course_name }} - Uploaded Marks</h2> <!-- Pass course_name in the view -->
+            <h2 class="text-center mb-4">{{ course_name }} - Uploaded Marks ({{ mark_type }})</h2> <!-- Display the mark type -->
 
-            <!-- Marks Table -->
             <table class="table table-bordered table-striped table-hover">
                 <thead class="thead-dark">
                     <tr>
@@ -59,16 +50,15 @@
                 <tbody>
                     {% for mark in marks %}
                         <tr>
-                            <td>{{ mark.student.matriculation }}</td>  <!-- Matriculation field corrected -->
+                            <td>{{ mark.student.matriculation }}</td>
                             <td>{{ mark.student.get_full_name }}</td>
-                            <td>{{ mark.marks }}</td> <!-- Correctly reference the 'grade' field -->
+                            <td>{{ mark.marks }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     {% else %}
-        <!-- No marks message -->
         <div class="alert alert-info text-center mt-5" role="alert">
             No marks uploaded yet.
         </div>

@@ -23,7 +23,7 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 # views.py
 from django.shortcuts import render
-from faculty.models import Registration
+from faculty.models import Mark, Registration
 
 
 from django.shortcuts import render
@@ -160,6 +160,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from faculty.models import Course
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 @login_required
 def course_registration(request):
     if not request.user.is_superuser and not request.user.is_staff:
@@ -241,8 +242,19 @@ def academic_structure(request):
     return render(request, 'students/academic_structure.html')
 
 @login_required
+@never_cache
 def ca_results(request):
-    return render(request, 'students/ca_results.html')
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        student_marks = Mark.objects.filter(student=profile.user, mark_type='CA')  # Get marks for the logged-in student for CA
+
+        return render(request, 'students/ca_results.html', {
+            'profile': profile,
+            'student_marks': student_marks,
+        })
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'User profile does not exist.')
+        return redirect('login')
 
 @login_required
 def exam_results(request):
