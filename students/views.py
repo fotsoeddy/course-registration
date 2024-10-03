@@ -260,8 +260,17 @@ def ca_results(request):
 
 @login_required
 def exam_results(request):
-    return render(request, 'students/exam_results.html')
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        student_marks = Mark.objects.filter(student=profile.user, mark_type='EXAM')  # Get marks for the logged-in student for CA
 
+        return render(request, 'students/exam_results.html', {
+            'profile': profile,
+            'student_marks': student_marks,
+        })
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'User profile does not exist.')
+        return redirect('login')
 @login_required
 def final_results(request):
     return render(request, 'students/final_results.html')
