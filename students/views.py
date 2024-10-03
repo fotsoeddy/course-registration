@@ -1,3 +1,5 @@
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 
 from django.shortcuts import get_object_or_404, render, redirect
@@ -291,3 +293,37 @@ def logout_view(request):
         return redirect('student_login')
     else:
         return redirect('student_login')
+# students/views.py
+# from django.shortcuts import render
+# from django.http import HttpResponse
+
+
+def download_registered_courses_pdf(request):
+    student = request.user  # Assuming the student is the logged-in user
+    registrations = Registration.objects.filter(student=student)  # Query student's registrations
+    
+    # Load the template and context
+    template_path = 'students/pdf/download_pdf.html'
+    context = {
+        'student': student,
+        'registrations': registrations,
+    }
+
+    # Render the template to a string
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # Create a PDF response
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="registered_courses_{student.matriculation}.pdf"'
+
+    # Generate the PDF
+    pisa_status = pisa.CreatePDF(
+        html, dest=response
+    )
+
+    # Check for errors
+    if pisa_status.err:
+        return HttpResponse('We had some errors with the PDF generation <pre>' + html + '</pre>')
+    
+    return response

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Courses PDF</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900">
+
+<div class="text-center mb-10">
+    <h1 class="text-3xl font-bold">Eddy Organisation</h1>
+    <h2 class="text-xl font-semibold mt-2">Registered Courses</h2>
+    <p class="text-lg mt-4">Matriculation Number: <span class="font-semibold">{{ student.matriculation }}</span></p>
+    <p class="text-lg">Name: <span class="font-semibold">{{ student.get_full_name }}</span></p>
+</div>
+
+<div class="overflow-x-auto">
+    <table class="min-w-full border-collapse border border-gray-300">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border border-gray-300 p-2 text-left">Course ID</th>
+                <th class="border border-gray-300 p-2 text-left">Course Name</th>
+                <th class="border border-gray-300 p-2 text-left">Department</th>
+                <th class="border border-gray-300 p-2 text-left">Credit Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registration in registrations %}
+            <tr class="bg-white">
+                <td class="border border-gray-300 p-2">{{ registration.course.course_id }}</td>
+                <td class="border border-gray-300 p-2">{{ registration.course.name }}</td>
+                <td class="border border-gray-300 p-2">{{ registration.course.course_department }}</td>
+                <td class="border border-gray-300 p-2">{{ registration.course.credit_value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
