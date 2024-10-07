@@ -2,6 +2,8 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import login_view, register_view, student_dashboard, course_registration, student_form, academic_structure, ca_results, exam_results, final_results, logout_view, unregister_course
+from . import views
+
 
 urlpatterns = [
     path('', login_view, name='student_login'),
@@ -14,7 +16,8 @@ urlpatterns = [
     path('ca-results/', ca_results, name='ca_results'),
     path('exam-results/', exam_results, name='exam_results'),
     path('final-results/', final_results, name='final_results'),
-    path('logout/', logout_view, name='logout'),  # Custom logout path
+    path('logout/', logout_view, name='logout'),
+      path('download_registered_courses_pdf/', views.download_registered_courses_pdf, name='download_registered_courses_pdf'),  # Custom logout path
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

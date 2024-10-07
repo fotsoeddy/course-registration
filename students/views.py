@@ -1,3 +1,5 @@
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 
 from django.shortcuts import get_object_or_404, render, redirect
@@ -258,8 +260,17 @@ def ca_results(request):
 
 @login_required
 def exam_results(request):
-    return render(request, 'students/exam_results.html')
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+        student_marks = Mark.objects.filter(student=profile.user, mark_type='EXAM')  # Get marks for the logged-in student for CA
 
+        return render(request, 'students/exam_results.html', {
+            'profile': profile,
+            'student_marks': student_marks,
+        })
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'User profile does not exist.')
+        return redirect('login')
 @login_required
 def final_results(request):
     return render(request, 'students/final_results.html')
@@ -291,3 +302,37 @@ def logout_view(request):
         return redirect('student_login')
     else:
         return redirect('student_login')
+# students/views.py
+# from django.shortcuts import render
+# from django.http import HttpResponse
+
+
+def download_registered_courses_pdf(request):
+    student = request.user  # Assuming the student is the logged-in user
+    registrations = Registration.objects.filter(student=student)  # Query student's registrations
+    
+    # Load the template and context
+    template_path = 'students/pdf/download_pdf.html'
+    context = {
+        'student': student,
+        'registrations': registrations,
+    }
+
+    # Render the template to a string
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # Create a PDF response
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="registered_courses_{student.matriculation}.pdf"'
+
+    # Generate the PDF
+    pisa_status = pisa.CreatePDF(
+        html, dest=response
+    )
+
+    # Check for errors
+    if pisa_status.err:
+        return HttpResponse('We had some errors with the PDF generation <pre>' + html + '</pre>')
+    
+    return response

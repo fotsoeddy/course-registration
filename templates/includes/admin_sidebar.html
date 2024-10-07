@@ -20,9 +20,7 @@
         <i class="fas fa-users me-2"></i>View Students
     </a>
     
-    <a href="{% url 'settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
-        <i class="fas fa-cog me-2"></i>Settings
-    </a>
+
     
     <a href="{% url 'logout' %}" class="nav-link {% if request.resolver_match.url_name == 'logout' %}active{% endif %}">
         <i class="fas fa-sign-out-alt me-2"></i>Logout
