@@ -24,35 +24,15 @@ DEBUG = os.getenv('DEBUG') == 'True'
 ALLOWED_HOSTS = ['*']
 
 
-# Database settings
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'university_portal_bz4g',
-#         'USER': 'university_portal_bz4g_user',
-#         'PASSWORD': 'l4gI2ekyBCGeyqWxsrTq9BGG2UJGq77a',
-#         'HOST': 'dpg-crj7ruij1k6c73fk5j0g-a.oregon-postgres.render.com',
-#         'PORT': '5432',
-#     },
-#     'local':{
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'university',
-#         'USER': 'eddy_university',
-#         'PASSWORD': 'Money237',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'university',
-        'USER': 'eddy_university',
-        'PASSWORD': 'Money237',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
+
+
+
+
 
 
 
