@@ -152,16 +152,14 @@ python manage.py test
 
 ## 🙋 Author
 
-- **Fotso Eddy Steve**
-- GitHub: [@CodeWizard42](https://github.com/fotsoeddy)
+- **Jaime Josepha Namekong**
+- GitHub: (https://github.com/namekongjosepha)
 
 ---
 
 ## 🙌 Acknowledgements
 
-- Internship Supervisor: **HooYia**
-- CEO: **Mr. Tedom Noutchogouin Donald**
-- Django & Tailwind CSS Documentation
+
 
 ---
 
