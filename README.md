@@ -87,9 +87,9 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### Step 6: Create Superuser via `KiteSuperUser`
+### Step 6: Create Superuser via `CreateSuperUser`
 ```bash
-python manage.py KiteSuperUser
+python manage.py CreateSuperUser
 ```
 You'll be prompted to input:
 - Username
