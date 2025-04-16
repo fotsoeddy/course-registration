@@ -237,7 +237,7 @@ def logout_view(request):
             'email': email,
             'status_message': _('You have been logged out successfully.'),
         }
-        subject = _('Goodbye from Eddy Organization')
+        subject = _('Goodbye from Josepha  Organization')
         message = render_to_string('emails/user_logged_out.html', context)
         
         email_message = EmailMessage(

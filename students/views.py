@@ -108,7 +108,7 @@ def register_view(request):
                     'field_of_study': field_of_study,
                     'academic_year': academic_year,
                 }
-                subject = 'Welcome to Eddy Organization'
+                subject = 'Welcome to Josepha  Organization'
                 message = render_to_string('emails/welcome.html', context)
 
                 email_msg = EmailMessage(
@@ -286,7 +286,7 @@ def logout_view(request):
             'email': email,
             'status_message': _('You have been logged out successfully.'),
         }
-        subject = _('Goodbye from Eddy Organization')
+        subject = _('Goodbye from Josepha  Organization')
         message = render_to_string('emails/user_logged_out.html', context)
         
         email = EmailMessage(
